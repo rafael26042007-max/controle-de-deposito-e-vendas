@@ -58,8 +58,7 @@ function logar() {
     if (usuario === cred.user && senha === cred.senha) {
       document.getElementById('success').classList.add('show');
       setTimeout(() => {
-        alert('Redirecionando para o dashboard...');
-        document.getElementById('success').classList.remove('show');
+        window.location.href="dashboard.html";
         btn.disabled = false;
         txt.style.display = 'block';
         spin.style.display = 'none';
