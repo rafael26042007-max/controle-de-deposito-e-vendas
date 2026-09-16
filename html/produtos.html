@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-widtg, initial-scale=1">
+  <title>NhLençois - Produtos</title>
+  <meta name="theme-color" content="#080A10">
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/produtos.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-ico">🧶</div>
+      <div class="sidebar-logo-name">NhLençois</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Principal</div>
+      <a class="nav-item" href="dashboard.html">
+        <span class="nav-item-ico">📊</span>Dashbord
+      </a>
+      <div class="nav-section-label">Cadastro</div>
+      <a class="nav-item active">
+        <span class="nav-item-ico">📦</span>Produtos
+      </a>
+      <a class="nav-item" href="materia.html">
+        <span class="nav-item-ico">🧵</span>Matéria-Prima
+      </a>
+      <a class="nav-item" href="vendedore.html">
+        <span class="nav-item-ico">🧑‍💼</span>
+      </a>
+      <a class="nav-item" href="clientes.html">
+        <span class="nav-item-ico">👥</span>Clientes
+      </a>
+      <div class="nav-section-label">Operações</div>
+      <a class="nav-item" href="producao.html">
+        <span class="nav-item-ico">🏭</span>
+      </a>
+      <a class="nav-item" href="vendas.html">
+        <span class="nav-item-ico">🛒</span>
+        <span class="nav-badge">3</span>
+      </a>
+      <a class="nav-item" href="notas.html">
+        <span class="nav-item-ico">🧾</span>
+      </a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="sidebar-user-av">👤</div>
+      <div>
+        <div class="sidebar-logo-name">Administrador</div>
+        <div class="sidebar-user-role">Admin</div>
+      </div>
+      <button class="sidebar-user-exit" onclick="window.location.href='login.html'" title="Sair">🚪</button>
+    </div>
+  </aside>
+
+  <!-- conteúdo -->
+  <main class="main">
+
+    <div class="topbar">
+      <div class="topbar-title">Produtos</div>
+      <div class="topbar-right">
+        <div class="topbar-date" id="data-atual"></div>
+        <div class="topbar-notif">🔔<div class="notif-dot"></div></div>
+      </div>
+    </div>
+
+    <div class="page">
+
+      <!-- header -->
+      <div class="page-header">
+        <div>
+          <div class="page-title">Estoque de Produtos</div>
+          <div class="page-sub">Gerencie todos os produtos da confecção</div>
+        </div>
+        <button class="btn-primary" onclick="abrirModal()">
+          + Novo Produto
+        </button>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-strip">
+        <div class="stat-chip">
+          <div class="stat-chip-ico">📦</div>
+          <div>
+            <div class="stat-chip-val" style="color: var(--green)">6</div>
+            <div class="stat-chip-lbl">Total de Produtos</div>
+          </div>
+        </div>
+        <div class="stat-chip">
+          <div class="stat-chip-ico">✅</div>
+          <div>
+            <div class="stat-chip-val" style="color: var(--green)">4</div>
+            <div class="stat-chip-lbl">Estoque Normal</div>
+          </div>
+        </div>
+        <div class="stat-chip">
+          <div class="stat-chip-ico">⚠️</div>
+          <div>
+            <div class="stat-chip-val" style="color: var(--accent)">1</div>
+            <div class="stat-chip-lbl">Estoque Baixo</div>
+          </div>
+        </div>
+        <div class="stat-chip">
+          <div class="stat-chip-ico">🔴</div>
+          <div>
+            <div>
+              <div class="stat-chip-val" style="color: var(--red)">2</div>
+              <div class="stat-chip-lbl">Estoque Crítico</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+          <div class="search-box">
+            <span>🔍</span>
+            <input type="text" placeholder="Buscar por nome ou código..."
+                    oninput="filtrar(this.value)">
+          </div>
+          <select class="filter-select" onchange="filtrarCategoria(this.value)">
+            <option value="">Todas as categorias</option>
+            <option value="Lençóis">Lençóis</option>
+            <option value="Fronhas">Fronhas</option>
+            <option value="Camisetas">Camisetas</option>
+            <option value="Toalhas">Toalhas</option>
+          </select>
+          <select class="filter-select" onchange="filtrarStatus(this.value)">
+            <option value="">Todos os status</option>
+            <option value="ok">Normal</option>
+            <option value="low">Baixo</option>
+            <option value="crit">Crítico</option>
+          </select>
+        </div>
+
+        <!-- Tabela -->
+
+
+
+
+
+      </div>
+    </div>
+  </main>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,194 @@
+/* ── LAYOUT DA PÁGINA DE PRODUTOS ── */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent-dk), var(--accent));
+  color: #000; font-size: 13px; font-weight: 800;
+  border: none; border-radius: 10px;
+  padding: 10px 18px; cursor: pointer;
+  transition: all .2s;
+  display: flex; align-items: center; gap: 6px;
+}
+.btn-primary:hover {
+  box-shadow: 0 4px 16px rgba(245,158,11,.35);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: var(--card); color: var(--text);
+  font-size: 13px; font-weight: 700;
+  border: 1px solid var(--border); border-radius: 10px;
+  padding: 10px 18px; cursor: pointer;
+  transition: all .2s;
+  display: flex; align-items: center; gap: 6px;
+}
+.btn-secondary:hover { border-color: var(--border2); }
+
+/* ── BARRA DE FERRAMENTAS ── */
+.toolbar {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 18px; flex-wrap: wrap;
+}
+.search-box {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--card); border: 1.5px solid var(--border);
+  border-radius: 10px; padding: 9px 14px; flex: 1; min-width: 200px;
+  transition: border .2s;
+}
+.search-box:focus-within { border-color: var(--accent); }
+.search-box input {
+  flex: 1; border: none; outline: none;
+  background: transparent; font-size: 13px; color: var(--text);
+}
+.search-box input::placeholder { color: var(--muted); }
+.search-box span { color: var(--muted); font-size: 16px; }
+
+.filter-select {
+  background: var(--card); border: 1.5px solid var(--border);
+  border-radius: 10px; padding: 9px 14px;
+  font-size: 13px; color: var(--text); outline: none;
+  cursor: pointer; transition: border .2s;
+}
+.filter-select:focus { border-color: var(--accent); }
+
+/* ── TABELA DE PRODUTOS ── */
+.table-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.table-card table {
+  width: 100%; border-collapse: collapse;
+}
+.table-card thead tr {
+  background: var(--surface);
+}
+.table-card th {
+  font-size: 11px; font-weight: 700; color: var(--muted);
+  text-align: left; padding: 13px 16px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap; cursor: pointer;
+  user-select: none;
+}
+.table-card th:hover { color: var(--text); }
+.table-card td {
+  font-size: 13px; padding: 13px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+.table-card tr:last-child td { border-bottom: none; }
+.table-card tr:hover td { background: rgba(255,255,255,.02); }
+
+.td-code { color: var(--muted); font-family: monospace; font-size: 12px; }
+.td-price { font-weight: 700; color: var(--accent); }
+.td-qty-ok { font-weight: 700; color: var(--green); }
+.td-qty-low { font-weight: 700; color: var(--accent); }
+.td-qty-crit { font-weight: 700; color: var(--red); }
+
+/* ── AÇÕES DA LINHA ── */
+.row-actions { display: flex; gap: 6px; }
+.btn-action {
+  width: 30px; height: 30px; border-radius: 8px;
+  border: none; cursor: pointer; font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s;
+}
+.btn-edit { background: var(--blue-dim, rgba(58,134,255,.12)); color: #3A86FF; }
+.btn-edit:hover { background: rgba(58,134,255,.25); }
+.btn-delete { background: rgba(239,68,68,.12); color: var(--red); }
+.btn-delete:hover { background: rgba(239,68,68,.25); }
+
+/* ── MODAL ── */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.7); z-index: 200;
+  align-items: center; justify-content: center;
+  padding: 20px;
+}
+.modal-overlay.show { display: flex; }
+.modal {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 18px; padding: 28px;
+  width: 100%; max-width: 500px;
+  box-shadow: 0 24px 80px rgba(0,0,0,.5);
+  animation: slideUp .25s ease;
+  max-height: 90vh; overflow-y: auto;
+}
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 22px;
+}
+.modal-title { font-size: 17px; font-weight: 800; }
+.modal-close {
+  background: none; border: none; color: var(--muted);
+  font-size: 20px; cursor: pointer; padding: 4px;
+  border-radius: 6px;
+}
+.modal-close:hover { color: var(--text); background: var(--border); }
+.modal-footer {
+  display: flex; gap: 10px; margin-top: 22px;
+}
+.modal-footer button { flex: 1; }
+
+/* ── FORM DENTRO DO MODAL ── */
+.form-group { margin-bottom: 16px; }
+.form-label {
+  display: block; font-size: 11px; font-weight: 700;
+  color: var(--muted2); margin-bottom: 7px;
+  text-transform: uppercase; letter-spacing: .5px;
+}
+.form-input, .form-select {
+  width: 100%; background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 10px; padding: 11px 14px;
+  font-size: 14px; color: var(--text); outline: none;
+  transition: border .2s;
+}
+.form-input:focus, .form-select:focus { border-color: var(--accent); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* ── PAGINAÇÃO ── */
+.pagination {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px;
+  border-top: 1px solid var(--border);
+}
+.pagination-info { font-size: 12px; color: var(--muted); }
+.pagination-btns { display: flex; gap: 6px; }
+.page-btn {
+  width: 32px; height: 32px; border-radius: 8px;
+  border: 1px solid var(--border); background: var(--card);
+  color: var(--text); font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all .15s;
+  display: flex; align-items: center; justify-content: center;
+}
+.page-btn:hover { border-color: var(--accent); color: var(--accent); }
+.page-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  text-align: center; padding: 48px 20px;
+}
+.empty-ico { font-size: 48px; margin-bottom: 14px; }
+.empty-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+.empty-sub { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+
+/* ── STATS TOPO ── */
+.stats-strip {
+  display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;
+}
+.stat-chip {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 10px; padding: 12px 16px;
+  display: flex; align-items: center; gap: 10px; flex: 1; min-width: 140px;
+}
+.stat-chip-ico { font-size: 20px; }
+.stat-chip-val { font-size: 18px; font-weight: 800; line-height: 1; }
+.stat-chip-lbl { font-size: 11px; color: var(--muted); margin-top: 2px; }
