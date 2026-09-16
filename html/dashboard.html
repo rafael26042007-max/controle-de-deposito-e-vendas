@@ -1,16 +1,315 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="pt-br">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-widht, initial-sacale=1">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>NhLençois — Dashboard</title>
   <meta name="theme-color" content="#080A10">
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/dashboard.css">
 </head>
-<body>
 
-  <script src="../js/app.js"></script>
-  <script src="../js/dashboard.js"></script>
+<body>
+<div class="app">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar">
+
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-ico">🧶</div>
+      <div class="sidebar-logo-name">NhLençois</div>
+    </div>
+
+    <nav class="sidebar-nav">
+
+      <div class="nav-section-label">Principal</div>
+
+      <a class="nav-item active">
+        <span class="nav-item-ico">📊</span>
+        Dashboard
+      </a>
+
+      <div class="nav-section-label">Cadastros</div>
+
+      <a class="nav-item" href="produtos.html">
+        <span class="nav-item-ico">📦</span>
+        Produtos
+      </a>
+
+      <a class="nav-item" href="materia.html">
+        <span class="nav-item-ico">🧵</span>
+        Matéria-Prima
+      </a>
+
+      <a class="nav-item" href="vendedores.html">
+        <span class="nav-item-ico">🧑‍💼</span>
+        Vendedores
+      </a>
+
+      <a class="nav-item" href="clientes.html">
+        <span class="nav-item-ico">👥</span>
+        Clientes
+      </a>
+
+      <div class="nav-section-label">Operações</div>
+
+      <a class="nav-item" href="producao.html">
+        <span class="nav-item-ico">🏭</span>
+        Produção
+      </a>
+
+      <a class="nav-item" href="vendas.html">
+        <span class="nav-item-ico">🛒</span>
+        Vendas
+        <span class="nav-badge">3</span>
+      </a>
+
+      <a class="nav-item" href="notas.html">
+        <span class="nav-item-ico">🧾</span>
+        Notas Fiscais
+      </a>
+
+    </nav>
+
+    <div class="sidebar-user">
+      <div class="sidebar-user-av">👤</div>
+      <div>
+        <div class="sidebar-user-name">Administrador</div>
+        <div class="sidebar-user-role">Admin</div>
+      </div>
+      <button class="sidebar-user-exit" onclick="window.location.href='login.html'" title="Sair">🚪</button>
+    </div>
+
+  </aside>
+
+  <!-- ── CONTEÚDO PRINCIPAL ── -->
+  <main class="main">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="topbar-title">Painel Principal</div>
+      <div class="topbar-right">
+        <div class="topbar-date" id="data-atual"></div>
+        <div class="topbar-notif">
+          🔔
+          <div class="notif-dot"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Página -->
+    <div class="page">
+
+      <div class="page-title">Bom dia, Administrador 👋</div>
+      <div class="page-sub">Aqui está o resumo do seu negócio hoje.</div>
+
+      <!-- Acesso rápido -->
+      <div class="quick-grid">
+        <a class="quick-btn" href="produtos.html">
+          <span class="quick-ico">📦</span>
+          <span class="quick-label">Novo Produto</span>
+        </a>
+        <a class="quick-btn" href="vendas.html">
+          <span class="quick-ico">🛒</span>
+          <span class="quick-label">Registrar Venda</span>
+        </a>
+        <a class="quick-btn" href="producao.html">
+          <span class="quick-ico">🏭</span>
+          <span class="quick-label">Registrar Produção</span>
+        </a>
+        <a class="quick-btn" href="clientes.html">
+          <span class="quick-ico">👥</span>
+          <span class="quick-label">Novo Cliente</span>
+        </a>
+      </div>
+
+      <!-- Métricas -->
+      <div class="metrics">
+        <div class="metric-card mc-green">
+          <div class="metric-ico">📦</div>
+          <div class="metric-val mv-green">248</div>
+          <div class="metric-label">Produtos em Estoque</div>
+          <div class="metric-sub">6 produtos com estoque baixo</div>
+        </div>
+        <div class="metric-card mc-accent">
+          <div class="metric-ico">💰</div>
+          <div class="metric-val mv-accent">R$ 12.480</div>
+          <div class="metric-label">Vendas do Mês</div>
+          <div class="metric-sub">↑ 18% em relação ao mês anterior</div>
+        </div>
+        <div class="metric-card mc-blue">
+          <div class="metric-ico">🧑‍💼</div>
+          <div class="metric-val mv-blue">5</div>
+          <div class="metric-label">Vendedores Ativos</div>
+          <div class="metric-sub">3 com vendas hoje</div>
+        </div>
+        <div class="metric-card mc-red">
+          <div class="metric-ico">⚠️</div>
+          <div class="metric-val mv-red">4</div>
+          <div class="metric-label">Parcelas em Atraso</div>
+          <div class="metric-sub">2 clientes bloqueados</div>
+        </div>
+      </div>
+
+      <!-- Grid de conteúdo -->
+      <div class="content-grid">
+
+        <!-- Últimas vendas -->
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <span class="dash-card-title">🛒 Últimas Vendas</span>
+            <a class="dash-card-link" href="vendas.html">Ver todas →</a>
+          </div>
+          <div class="dash-card-body">
+            <table class="simple-table">
+              <thead>
+              <tr>
+                <th>Cliente</th>
+                <th>Vendedor</th>
+                <th>Valor</th>
+                <th>Status</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr>
+                <td>Loja Mania do Lar</td>
+                <td>Carlos</td>
+                <td>R$ 780,00</td>
+                <td><span class="badge badge-blue">Enviado</span></td>
+              </tr>
+              <tr>
+                <td>Mercado Têxtil SP</td>
+                <td>Ana</td>
+                <td>R$ 1.200,00</td>
+                <td><span class="badge badge-green">Entregue</span></td>
+              </tr>
+              <tr>
+                <td>Armarinho Central</td>
+                <td>Carlos</td>
+                <td>R$ 520,00</td>
+                <td><span class="badge badge-orange">Produção</span></td>
+              </tr>
+              <tr>
+                <td>Distribuidora Norte</td>
+                <td>Marcos</td>
+                <td>R$ 340,00</td>
+                <td><span class="badge badge-red">Pendente</span></td>
+              </tr>
+              <tr>
+                <td>Casa e Conforto</td>
+                <td>Ana</td>
+                <td>R$ 960,00</td>
+                <td><span class="badge badge-orange">Produção</span></td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Alertas -->
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <span class="dash-card-title">🚨 Alertas</span>
+            <span class="badge badge-red">4</span>
+          </div>
+          <div class="dash-card-body">
+
+            <div class="alert-item">
+              <div class="alert-ico">🔴</div>
+              <div class="alert-body">
+                <div class="alert-title">Lençol Solteiro Azul</div>
+                <div class="alert-sub">Estoque crítico — apenas 3 unidades</div>
+                <div class="alert-time">Produto · Estoque mínimo: 10</div>
+              </div>
+            </div>
+
+            <div class="alert-item">
+              <div class="alert-ico">🔴</div>
+              <div class="alert-body">
+                <div class="alert-title">Embalagem Plástica</div>
+                <div class="alert-sub">Estoque crítico — apenas 15 unidades</div>
+                <div class="alert-time">Matéria-Prima · Estoque mínimo: 50</div>
+              </div>
+            </div>
+
+            <div class="alert-item">
+              <div class="alert-ico">🟡</div>
+              <div class="alert-body">
+                <div class="alert-title">Armarinho Central</div>
+                <div class="alert-sub">3 parcelas em atraso — cliente bloqueado</div>
+                <div class="alert-time">Cliente · Venda #0523</div>
+              </div>
+            </div>
+
+            <div class="alert-item">
+              <div class="alert-ico">🟡</div>
+              <div class="alert-body">
+                <div class="alert-title">Distribuidora Norte</div>
+                <div class="alert-sub">2 parcelas em atraso — cliente bloqueado</div>
+                <div class="alert-time">Cliente · Venda #0524</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Estoque baixo -->
+      <div class="dash-card">
+        <div class="dash-card-header">
+          <span class="dash-card-title">📦 Produtos com Estoque Baixo</span>
+          <a class="dash-card-link" href="produtos.html">Ver estoque →</a>
+        </div>
+        <div class="dash-card-body">
+          <table class="simple-table">
+            <thead>
+            <tr>
+              <th>Código</th>
+              <th>Produto</th>
+              <th>Categoria</th>
+              <th>Estoque Atual</th>
+              <th>Mínimo</th>
+              <th>Situação</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td style="color:var(--muted);font-family:monospace">LS002</td>
+              <td>Lençol Solteiro Azul</td>
+              <td>Lençóis</td>
+              <td style="color:var(--red);font-weight:700">3</td>
+              <td style="color:var(--muted)">10</td>
+              <td><span class="badge badge-red">Crítico</span></td>
+            </tr>
+            <tr>
+              <td style="color:var(--muted);font-family:monospace">CB005</td>
+              <td>Camiseta Básica M</td>
+              <td>Camisetas</td>
+              <td style="color:var(--red);font-weight:700">3</td>
+              <td style="color:var(--muted)">15</td>
+              <td><span class="badge badge-red">Crítico</span></td>
+            </tr>
+            <tr>
+              <td style="color:var(--muted);font-family:monospace">LS003</td>
+              <td>Lençol Solteiro Rosa</td>
+              <td>Lençóis</td>
+              <td style="color:var(--accent);font-weight:700">7</td>
+              <td style="color:var(--muted)">10</td>
+              <td><span class="badge badge-orange">Baixo</span></td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div><!-- /page -->
+  </main>
+
+</div><!-- /app -->
+
+<script src="../js/app.js"></script>
+<script src="../js/dashboard.js"></script>
 </body>
 </html>
