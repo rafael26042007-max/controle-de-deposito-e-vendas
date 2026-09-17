@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-widtg, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>NhLençois - Produtos</title>
   <meta name="theme-color" content="#080A10">
-  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/dashboard.css">
   <link rel="stylesheet" href="../css/produtos.css">
 </head>
@@ -21,37 +21,37 @@
     <nav class="sidebar-nav">
       <div class="nav-section-label">Principal</div>
       <a class="nav-item" href="dashboard.html">
-        <span class="nav-item-ico">📊</span>Dashbord
+        <span class="nav-item-ico">📊</span>Dashboard
       </a>
-      <div class="nav-section-label">Cadastro</div>
+      <div class="nav-section-label">Cadastros</div>
       <a class="nav-item active">
         <span class="nav-item-ico">📦</span>Produtos
       </a>
       <a class="nav-item" href="materia.html">
         <span class="nav-item-ico">🧵</span>Matéria-Prima
       </a>
-      <a class="nav-item" href="vendedore.html">
-        <span class="nav-item-ico">🧑‍💼</span>
+      <a class="nav-item" href="vendedores.html">
+        <span class="nav-item-ico">🧑‍💼</span>Vendedores
       </a>
       <a class="nav-item" href="clientes.html">
         <span class="nav-item-ico">👥</span>Clientes
       </a>
       <div class="nav-section-label">Operações</div>
       <a class="nav-item" href="producao.html">
-        <span class="nav-item-ico">🏭</span>
+        <span class="nav-item-ico">🏭</span>Produção
       </a>
       <a class="nav-item" href="vendas.html">
-        <span class="nav-item-ico">🛒</span>
+        <span class="nav-item-ico">🛒</span>Vendas
         <span class="nav-badge">3</span>
       </a>
       <a class="nav-item" href="notas.html">
-        <span class="nav-item-ico">🧾</span>
+        <span class="nav-item-ico">🧾</span>Notas Fiscais
       </a>
     </nav>
     <div class="sidebar-user">
       <div class="sidebar-user-av">👤</div>
       <div>
-        <div class="sidebar-logo-name">Administrador</div>
+        <div class="sidebar-user-name">Administrador</div>
         <div class="sidebar-user-role">Admin</div>
       </div>
       <button class="sidebar-user-exit" onclick="window.location.href='login.html'" title="Sair">🚪</button>
@@ -78,7 +78,7 @@
           <div class="page-sub">Gerencie todos os produtos da confecção</div>
         </div>
         <button class="btn-primary" onclick="abrirModal()">
-          + Novo Produto
+          ＋ Novo Produto
         </button>
       </div>
 
@@ -87,66 +87,160 @@
         <div class="stat-chip">
           <div class="stat-chip-ico">📦</div>
           <div>
-            <div class="stat-chip-val" style="color: var(--green)">6</div>
+            <div class="stat-chip-val" style="color:var(--green)">6</div>
             <div class="stat-chip-lbl">Total de Produtos</div>
           </div>
         </div>
         <div class="stat-chip">
           <div class="stat-chip-ico">✅</div>
           <div>
-            <div class="stat-chip-val" style="color: var(--green)">4</div>
+            <div class="stat-chip-val" style="color:var(--green)">4</div>
             <div class="stat-chip-lbl">Estoque Normal</div>
           </div>
         </div>
         <div class="stat-chip">
           <div class="stat-chip-ico">⚠️</div>
           <div>
-            <div class="stat-chip-val" style="color: var(--accent)">1</div>
+            <div class="stat-chip-val" style="color:var(--accent)">1</div>
             <div class="stat-chip-lbl">Estoque Baixo</div>
           </div>
         </div>
         <div class="stat-chip">
           <div class="stat-chip-ico">🔴</div>
           <div>
-            <div>
-              <div class="stat-chip-val" style="color: var(--red)">2</div>
-              <div class="stat-chip-lbl">Estoque Crítico</div>
-            </div>
+            <div class="stat-chip-val" style="color:var(--red)">2</div>
+            <div class="stat-chip-lbl">Estoque Crítico</div>
           </div>
         </div>
-
-        <!-- Toolbar -->
-        <div class="toolbar">
-          <div class="search-box">
-            <span>🔍</span>
-            <input type="text" placeholder="Buscar por nome ou código..."
-                    oninput="filtrar(this.value)">
-          </div>
-          <select class="filter-select" onchange="filtrarCategoria(this.value)">
-            <option value="">Todas as categorias</option>
-            <option value="Lençóis">Lençóis</option>
-            <option value="Fronhas">Fronhas</option>
-            <option value="Camisetas">Camisetas</option>
-            <option value="Toalhas">Toalhas</option>
-          </select>
-          <select class="filter-select" onchange="filtrarStatus(this.value)">
-            <option value="">Todos os status</option>
-            <option value="ok">Normal</option>
-            <option value="low">Baixo</option>
-            <option value="crit">Crítico</option>
-          </select>
-        </div>
-
-        <!-- Tabela -->
-
-
-
-
-
       </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <div class="search-box">
+          <span>🔍</span>
+          <input type="text" placeholder="Buscar por nome ou código..."
+                 oninput="filtrar(this.value)">
+        </div>
+        <select class="filter-select" onchange="filtrarCategoria(this.value)">
+          <option value="">Todas as categorias</option>
+          <option value="Lençóis">Lençóis</option>
+          <option value="Fronhas">Fronhas</option>
+          <option value="Camisetas">Camisetas</option>
+          <option value="Toalhas">Toalhas</option>
+        </select>
+        <select class="filter-select" onchange="filtrarStatus(this.value)">
+          <option value="">Todos os status</option>
+          <option value="ok">Normal</option>
+          <option value="low">Baixo</option>
+          <option value="crit">Crítico</option>
+        </select>
+      </div>
+
+      <!-- Tabela -->
+      <div class="table-card">
+        <table>
+          <thead>
+          <tr>
+            <th>Código</th>
+            <th>Produto</th>
+            <th>Categoria</th>
+            <th>Preço Unit.</th>
+            <th>Qtd. Estoque</th>
+            <th>Qtd. Mínima</th>
+            <th>Situação</th>
+            <th>Ações</th>
+          </tr>
+          </thead>
+          <tbody id="tabela-body">
+          </tbody>
+        </table>
+        <div class="pagination">
+          <div class="pagination-info" id="pag-info">Mostrando 6 de 6 produtos</div>
+          <div class="pagination-btns">
+            <button class="page-btn active">1</button>
+          </div>
+        </div>
+      </div>
+
     </div>
   </main>
+
 </div>
 
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">➕ Novo Produto</div>
+      <button class="modal-close" onclick="fecharModal()">✕</button>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Código</label>
+        <input class="form-input" type="text" id="f-codigo"
+               placeholder="Gerado automaticamente" disabled>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Categoria *</label>
+        <select class="form-select" id="f-categoria">
+          <option value="">Selecione...</option>
+          <option>Lençóis</option>
+          <option>Fronhas</option>
+          <option>Camisetas</option>
+          <option>Toalhas</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Nome do Produto *</label>
+      <input class="form-input" type="text" id="f-nome"
+             placeholder="Ex: Lençol Casal Branco">
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Preço Unitário *</label>
+        <input class="form-input" type="number" id="f-preco"
+               placeholder="0,00" step="0.01">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Quantidade Inicial</label>
+        <input class="form-input" type="number" id="f-qtd"
+               placeholder="0" min="0">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Quantidade Mínima</label>
+        <input class="form-input" type="number" id="f-qtd-min"
+               placeholder="10" min="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Cor</label>
+        <input class="form-input" type="text" id="f-cor"
+               placeholder="Ex: Branco, Azul...">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Observações</label>
+      <input class="form-input" type="text" id="f-obs"
+             placeholder="Ex: Tamanho casal, 100% algodão...">
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="fecharModal()">Cancelar</button>
+      <button class="btn-primary" onclick="salvarProduto()" style="flex:1.5">
+        ✓ Salvar Produto
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/app.js"></script>
+<script src="../js/produtos.js"></script>
 </body>
 </html>
