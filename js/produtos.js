@@ -213,7 +213,7 @@ function abrirModal(id = null) {
     document.getElementById('f-categoria').value = p.categoria;
     document.getElementById('f-preco').value = p.preco;
     document.getElementById('f-qtd').value = p.qtd;
-    document.getElementById('f-qtdMin').value = p.qtdMin;
+    document.getElementById('f-qtd-min').value = p.qtdMin;
     document.getElementById('f-cor').value = p.cor;
     document.getElementById('f-obs').value = p.obs;
 
@@ -224,7 +224,7 @@ function abrirModal(id = null) {
     document.getElementById('f-categoria').value = '';
     document.getElementById('f-preco').value = '';
     document.getElementById('f-qtd').value = '';
-    document.getElementById('f-qtdMin').value = '10';
+    document.getElementById('f-qtd-min').value = '10';
     document.getElementById('f-cor').value = '';
     document.getElementById('f-obs').value = '';
   }
@@ -263,7 +263,7 @@ function salvarProduto() {
     categoria: cat,
     preco: preco,
     qtd: parseInt(document.getElementById('f-qtd').value) || 0,
-    qtdMin: parseInt(document.getElementById('f-qtdMin').value) || 10,
+    qtdMin: parseInt(document.getElementById('f-qtd-min').value) || 10,
     cor: document.getElementById('f-cor').value.trim(),
     obs: document.getElementById('f-obs').value.trim()
   };

@@ -1,0 +1,165 @@
+/* ── PRODUÇÃO ── */
+.prod-grid {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+/* ── CARD DE FORMULÁRIO ── */
+.form-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.form-card-header {
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  font-weight: 800;
+}
+.form-card-body { padding: 18px; }
+
+/* ── RECEITA ── */
+.receita-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.receita-item:last-child { border-bottom: none; }
+.receita-nome { font-weight: 600; }
+.receita-qtd { color: var(--muted); font-size: 12px; }
+.receita-estoque-ok  { color: var(--green); font-weight: 700; font-size: 12px; }
+.receita-estoque-low { color: var(--red);   font-weight: 700; font-size: 12px; }
+
+/* ── SIMULAÇÃO ── */
+.simulacao-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  margin-top: 14px;
+}
+.sim-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 13px;
+  border-bottom: 1px solid var(--border);
+}
+.sim-row:last-child { border-bottom: none; }
+.sim-label { color: var(--muted); }
+.sim-ok   { color: var(--green); font-weight: 700; }
+.sim-err  { color: var(--red);   font-weight: 700; }
+.sim-total {
+  color: var(--accent);
+  font-size: 16px;
+  font-weight: 800;
+}
+
+/* ── ALERTA INSUFICIENTE ── */
+.alert-insuf {
+  background: rgba(239,68,68,.1);
+  border: 1px solid rgba(239,68,68,.3);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 12px;
+  color: var(--red);
+  margin-top: 10px;
+  display: none;
+}
+.alert-insuf.show { display: block; }
+
+/* ── HISTÓRICO ── */
+.hist-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.hist-card-header {
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+/* ── LINHA DE HISTÓRICO ── */
+.hist-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 18px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  transition: background .15s;
+}
+.hist-row:last-child { border-bottom: none; }
+.hist-row:hover { background: rgba(255,255,255,.02); }
+.hist-ico {
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  background: rgba(245,158,11,.1);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.hist-info { flex: 1; }
+.hist-nome { font-weight: 700; margin-bottom: 2px; }
+.hist-sub  { font-size: 12px; color: var(--muted); }
+.hist-right { text-align: right; }
+.hist-qtd  { font-weight: 700; color: var(--green); font-size: 14px; }
+.hist-data { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+/* ── SELECT PRODUTO ── */
+.produto-select-wrap {
+  position: relative;
+}
+.produto-info-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-top: 8px;
+  display: none;
+}
+.produto-info-box.show { display: block; }
+.pib-nome { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.pib-sub  { font-size: 12px; color: var(--muted); }
+
+/* ── BTN CONFIRMAR ── */
+.btn-confirmar {
+  width: 100%; padding: 13px;
+  background: linear-gradient(135deg, var(--accent-dk), var(--accent));
+  color: #000; font-size: 14px; font-weight: 800;
+  border: none; border-radius: 10px; cursor: pointer;
+  transition: all .2s; margin-top: 14px;
+}
+.btn-confirmar:hover {
+  box-shadow: 0 4px 16px rgba(245,158,11,.35);
+  transform: translateY(-1px);
+}
+.btn-confirmar:disabled {
+  opacity: .5; cursor: not-allowed; transform: none;
+}
+.btn-simular {
+  width: 100%; padding: 10px;
+  background: var(--surface); color: var(--text);
+  font-size: 13px; font-weight: 700;
+  border: 1.5px solid var(--border);
+  border-radius: 10px; cursor: pointer;
+  transition: all .2s; margin-top: 8px;
+}
+.btn-simular:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 1000px) {
+  .prod-grid { grid-template-columns: 1fr; }
+}
