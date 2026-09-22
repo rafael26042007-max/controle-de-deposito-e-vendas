@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>NhLençois - Produção</title>
+  <title>NhLençois — Produção</title>
   <meta name="theme-color" content="#080A10">
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/dashboard.css">
@@ -28,9 +28,9 @@
         <span class="nav-item-ico">📦</span>Produtos
       </a>
       <a class="nav-item" href="materia.html">
-        <span class="nav-item-ico">🧵</span>Materia-Prima
+        <span class="nav-item-ico">🧵</span>Matéria-Prima
       </a>
-      <a class="nav-item" href="vendedore.html">
+      <a class="nav-item" href="vendedores.html">
         <span class="nav-item-ico">🧑‍💼</span>Vendedores
       </a>
       <a class="nav-item" href="clientes.html">
@@ -74,31 +74,103 @@
       <div class="page-header">
         <div>
           <div class="page-title">Registrar Produção</div>
-          <div class="page-sub">Baixa automática de matéria-prima ao conferir</div>
+          <div class="page-sub">Baixa automática de matéria-prima ao confirmar</div>
         </div>
       </div>
 
       <div class="prod-grid">
 
-      <!-- Formulário -->
+        <!-- Formulário -->
+        <div>
+
+          <!-- Selecionar produto -->
+          <div class="form-card" style="margin-bottom:14px">
+            <div class="form-card-header">🏭 Produto a Produzir</div>
+            <div class="form-card-body">
+
+              <div class="form-group">
+                <label class="form-label">Produto</label>
+                <select class="form-select" id="sel-produto" onchange="selecionarProduto()">
+                  <option value="">Selecione o produto...</option>
+                  <option value="1">Lençol Casal Branco</option>
+                  <option value="2">Lençol Solteiro Azul</option>
+                  <option value="3">Fronha Branca</option>
+                  <option value="4">Camiseta Básica P</option>
+                  <option value="5">Camiseta Básica M</option>
+                </select>
+              </div>
+
+              <div class="produto-info-box" id="produto-info">
+                <div class="pib-nome" id="pib-nome"></div>
+                <div class="pib-sub" id="pib-sub"></div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Receita de produção -->
+          <div class="form-card" style="margin-bottom:14px" id="card-receita" style="display:none">
+            <div class="form-card-header">🧵 Matéria-Prima Necessária</div>
+            <div class="form-card-body">
+              <div id="lista-receita"></div>
+            </div>
+          </div>
+
+          <!-- Quantidade -->
+          <div class="form-card" style="margin-bottom:14px">
+            <div class="form-card-header">📦 Quantidade a Produzir</div>
+            <div class="form-card-body">
+
+              <div class="form-group">
+                <label class="form-label">Quantidade</label>
+                <input class="form-input" type="number" id="qtd-produzir"
+                       placeholder="Ex: 50" min="1"
+                       oninput="simularProducao()">
+              </div>
+
+              <button class="btn-simular" onclick="simularProducao()">
+                🔍 Simular Produção
+              </button>
+
+              <!-- Resultado da simulação -->
+              <div id="simulacao-result"></div>
+
+              <div class="alert-insuf" id="alert-insuf">
+                ⚠️ Matéria-prima insuficiente para essa quantidade.
+                Reduza a quantidade ou reponha o estoque.
+              </div>
+
+              <button class="btn-confirmar" id="btn-confirmar"
+                      onclick="confirmarProducao()" disabled>
+                ✓ Confirmar Produção
+              </button>
+
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Histórico -->
+        <div class="hist-card">
+          <div class="hist-card-header">
+            <span>📋 Histórico de Produções</span>
+            <span id="hist-total" style="font-size:12px;color:var(--muted);font-weight:500"></span>
+          </div>
+          <div id="historico-lista">
+            <div style="text-align:center;padding:40px;color:var(--muted)">
+              <div style="font-size:36px;margin-bottom:10px">🏭</div>
+              <div>Nenhuma produção registrada ainda</div>
+            </div>
+          </div>
+        </div>
 
       </div>
-
-
-
-
-
-
-
     </div>
-
-
-
-
-
-
   </main>
+
 </div>
 
+<script src="../js/app.js"></script>
+<script src="../js/producao.js"></script>
 </body>
 </html>
