@@ -256,45 +256,110 @@ function  editarVendedor(id) {
 /* ══════════════════════════════════════════════════
    SALVAR
 ══════════════════════════════════════════════════ */
-form.addEventListener("submit", event => {
-  event.preventDefault();
 
-  const id = document.getElementById("vendedorId").value;
-  const codigo = document.getElementById("codigo").value.trim();
-  const nome = document.getElementById("nome").value.trim();
-  const telefone = document.getElementById("telefone").value.trim();
-  const email = document.getElementById("email").value.trim();
-  const status = document.getElementById("status").value;
-});
-/* VALIDAÇÃO */
-if (!nome) {
-  alert("Preencha o nome do vendedor");
-  return;
-}
-/* EDITAR */
-if (id) {
+form.addEventListener(
+  "submit",
+  event => {
+    event.preventDefault();
+    const id = document.getElementById("vendedorId").value;
+    const codigo = document.getElementById("codigo").value.trim();
+    const nome = document.getElementById("nome").value.trim();
+    const telefone = document.getElementById("telefone").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const status = document.getElementById("status").value;
 
-  const vendedor = vendedores.find(item => item.id === Number(id));
+    /* VALIDAÇÃO */
+    if (!codigo || !nome) {
+      alert("Preencha o código e o nome do vendedor.");
+      return;
+    }
+    /* EDITAR */
 
-  if (vendedor) {
-    vendedor.codigo = gerarCodigo();
-    vendedor.nome = nome;
-    vendedor.telefone = telefone;
-    vendedor.email = email;
-    vendedor.status = status;
+    if (id) {
+      const vendedor =
+        vendedores.find(
+          item => item.id === Number(id)
+        );
+
+      if (vendedor) {
+        vendedor.codigo = codigo;
+        vendedor.nome = nome;
+        vendedor.telefone = telefone;
+        vendedor.email = email;
+        vendedor.status = status;
+      }
+    }
+
+    /* NOVO */
+    else {
+      vendedores.push({
+        id: proximoId++,
+        codigo,
+        nome,
+        telefone,
+        email,
+        status
+      });
+    }
+    fecharModal();
+    atualizarResumo();
+    rederizarVendedores();
   }
-  /* NOVO */
-  else {
-    vendedor.push({
-      id: proximoId++,
-      codigo,
-      nome,
-      telefone,
-      email,
-      status
-    });
+);
+/* ══════════════════════════════════════════════════
+   ATIVAR / DESATIVAR
+══════════════════════════════════════════════════ */
+function alternarStatus(id) {
+  const  vendedor = vendedores.find(item => item.id === id);
+
+  if (!vendedor) {
+    return;
   }
-  fecharModal();
+
+  vendedor.status = vendedor.status === "ativo"
+    ? "inativo"
+    : "ativo";
+
   atualizarResumo();
   rederizarVendedores();
 }
+/* ══════════════════════════════════════════════════
+   PESQUISA
+══════════════════════════════════════════════════ */
+pesquisa.addEventListener("input", rederizarVendedores);
+
+/* ══════════════════════════════════════════════════
+   FILTRO
+══════════════════════════════════════════════════ */
+filtro.addEventListener("change", rederizarVendedores);
+
+/* ══════════════════════════════════════════════════
+   FECHAR MODAL
+══════════════════════════════════════════════════ */
+btnFechar.addEventListener("click", fecharModal);
+
+btnCancelar.addEventListener("click", fecharModal);
+
+/* ══════════════════════════════════════════════════
+   CLICAR FORA DO MODAL
+══════════════════════════════════════════════════ */
+modal.addEventListener("click", event => {
+  if (event.target === modal) {
+    fecharModal();
+  }
+});
+
+/* ══════════════════════════════════════════════════
+   ESC PARA FECHAR
+══════════════════════════════════════════════════ */
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape" && modal.classList.contains("show")) {
+    fecharModal();
+  }
+});
+
+/* ══════════════════════════════════════════════════
+   INICIALIZAÇÃO
+══════════════════════════════════════════════════ */
+atualizarResumo();
+rederizarVendedores();
