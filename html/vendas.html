@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NhLençois — Vendas</title>
+  <meta name="theme-color" content="#080A10">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/vendas.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-ico">🧶</div>
+      <div class="sidebar-logo-name">NhLençois</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Principal</div>
+      <a class="nav-item" href="dashboard.html">
+        <span class="nav-item-ico">📊</span>Dashboard
+      </a>
+      <div class="nav-section-label">Cadastros</div>
+      <a class="nav-item" href="produtos.html">
+        <span class="nav-item-ico">📦</span>Produtos
+      </a>
+      <a class="nav-item" href="materia.html">
+        <span class="nav-item-ico">🧵</span>Matéria-Prima
+      </a>
+      <a class="nav-item" href="vendedores.html">
+        <span class="nav-item-ico">🧑‍💼</span>Vendedores
+      </a>
+      <a class="nav-item" href="clientes.html">
+        <span class="nav-item-ico">👥</span>Clientes
+      </a>
+      <div class="nav-section-label">Operações</div>
+      <a class="nav-item" href="producao.html">
+        <span class="nav-item-ico">🏭</span>Produção
+      </a>
+      <a class="nav-item active">
+        <span class="nav-item-ico">🛒</span>Vendas
+      </a>
+      <a class="nav-item" href="notas.html">
+        <span class="nav-item-ico">🧾</span>Notas Fiscais
+      </a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="sidebar-user-av">👤</div>
+      <div>
+        <div class="sidebar-user-name">Administrador</div>
+        <div class="sidebar-user-role">Admin</div>
+      </div>
+      <button class="sidebar-user-exit" onclick="window.location.href='login.html'" title="Sair">🚪</button>
+    </div>
+  </aside>
+
+  <!-- conteúdo -->
+  <main class="main">
+
+    <div class="topbar">
+      <div class="topbar-title">Vendas</div>
+      <div class="topbar-right">
+        <div class="topbar-date" id="data-atual"></div>
+        <div class="topbar-notif">🔔<div class="notif-dot"></div></div>
+      </div>
+    </div>
+
+    <div class="page">
+
+      <div class="page-header">
+        <div>
+          <div class="page-title">Vendas</div>
+          <div class="page-sub">Registre e gerencie todas as vendas</div>
+        </div>
+        <button class="btn-primary" onclick="abrirModal()">
+          ＋ Nova Venda
+        </button>
+      </div>
+
+      <!-- Resumo -->
+      <div class="resumo-grid">
+        <div class="resumo-card">
+          <div class="resumo-ico azul">🛒</div>
+          <div>
+            <div class="resumo-val" id="total-vendas">0</div>
+            <div class="resumo-lbl">Total de Vendas</div>
+          </div>
+        </div>
+        <div class="resumo-card">
+          <div class="resumo-ico verde">💰</div>
+          <div>
+            <div class="resumo-val" id="total-valor">R$ 0</div>
+            <div class="resumo-lbl">Valor Total do Mês</div>
+          </div>
+        </div>
+        <div class="resumo-card">
+          <div class="resumo-ico amarelo">⏳</div>
+          <div>
+            <div class="resumo-val" id="total-pendentes">0</div>
+            <div class="resumo-lbl">Pendentes</div>
+          </div>
+        </div>
+        <div class="resumo-card">
+          <div class="resumo-ico vermelho">⚠️</div>
+          <div>
+            <div class="resumo-val" id="total-atraso">0</div>
+            <div class="resumo-lbl">Em Atraso</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <div class="search-box">
+          <span>🔍</span>
+          <input type="text" id="pesquisa"
+                 placeholder="Buscar por cliente, vendedor ou código..."
+                 oninput="renderTabela()">
+        </div>
+        <select class="filter-select" id="filtro-status" onchange="renderTabela()">
+          <option value="todos">Todos os status</option>
+          <option value="pendente">Pendente</option>
+          <option value="producao">Em Produção</option>
+          <option value="enviado">Enviado</option>
+          <option value="entregue">Entregue</option>
+          <option value="atraso">Em Atraso</option>
+        </select>
+      </div>
+
+      <!-- Tabela -->
+      <div class="table-card">
+        <table>
+          <thead>
+          <tr>
+            <th>Código</th>
+            <th>Cliente</th>
+            <th>Vendedor</th>
+            <th>Produto</th>
+            <th>Parcelas</th>
+            <th>Valor Total</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+          </thead>
+          <tbody id="tabela-body"></tbody>
+        </table>
+        <div class="pagination">
+          <div class="pagination-info" id="pag-info">0 vendas</div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+</div>
+
+<!-- Modal Nova Venda -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">🛒 Nova Venda</div>
+      <button class="modal-close" onclick="fecharModal()">✕</button>
+    </div>
+
+    <!-- Alerta cliente bloqueado -->
+    <div class="alert-bloqueado" id="alert-bloqueado">
+      🔒 Este cliente está bloqueado por inadimplência e não pode realizar novas compras.
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Cliente *</label>
+        <select class="form-select" id="f-cliente" onchange="verificarCliente()">
+          <option value="">Selecione...</option>
+          <option value="1">Loja Mania do Lar</option>
+          <option value="2">Mercado Têxtil SP</option>
+          <option value="3">Armarinho Central 🔒</option>
+          <option value="4">Distribuidora Norte 🔒</option>
+          <option value="5">Casa e Conforto</option>
+          <option value="6">Tecidos & Cia</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Vendedor *</label>
+        <select class="form-select" id="f-vendedor">
+          <option value="">Selecione...</option>
+          <option value="1">Carlos Silva (5%)</option>
+          <option value="2">Ana Souza (5%)</option>
+          <option value="3">Marcos Pereira (4.5%)</option>
+          <option value="5">Roberto Nunes (6%)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Produto *</label>
+        <select class="form-select" id="f-produto" onchange="calcularTotal()">
+          <option value="">Selecione...</option>
+          <option value="1" data-preco="65.00">Lençol Casal Branco — R$ 65,00</option>
+          <option value="2" data-preco="45.00">Lençol Solteiro Azul — R$ 45,00</option>
+          <option value="3" data-preco="18.00">Fronha Branca — R$ 18,00</option>
+          <option value="4" data-preco="32.00">Camiseta Básica P — R$ 32,00</option>
+          <option value="5" data-preco="32.00">Camiseta Básica M — R$ 32,00</option>
+          <option value="6" data-preco="38.00">Toalha de Banho — R$ 38,00</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Quantidade *</label>
+        <input class="form-input" type="number" id="f-qtd"
+               placeholder="Ex: 10" min="1" oninput="calcularTotal()">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Nº de Parcelas</label>
+        <select class="form-select" id="f-parcelas" onchange="calcularTotal()">
+          <option value="1">À vista (1x)</option>
+          <option value="2">2x</option>
+          <option value="3">3x</option>
+          <option value="4">4x</option>
+          <option value="5">5x</option>
+          <option value="6">6x</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Status</label>
+        <select class="form-select" id="f-status">
+          <option value="pendente">Pendente</option>
+          <option value="producao">Em Produção</option>
+          <option value="enviado">Enviado</option>
+          <option value="entregue">Entregue</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Resumo da venda -->
+    <div class="venda-resumo" id="venda-resumo" style="display:none">
+      <div class="venda-resumo-row">
+        <span class="venda-resumo-label">Subtotal</span>
+        <span class="venda-resumo-val" id="r-subtotal">R$ 0,00</span>
+      </div>
+      <div class="venda-resumo-row">
+        <span class="venda-resumo-label">Juros</span>
+        <span class="venda-resumo-val" id="r-juros">R$ 0,00</span>
+      </div>
+      <div class="venda-resumo-row">
+        <span class="venda-resumo-label">Total</span>
+        <span class="venda-resumo-val venda-total" id="r-total">R$ 0,00</span>
+      </div>
+    </div>
+
+    <!-- Parcelas -->
+    <div class="parcelas-box" id="parcelas-box">
+      <div class="parcelas-titulo">📅 Detalhamento das Parcelas</div>
+      <div id="parcelas-lista"></div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="fecharModal()">Cancelar</button>
+      <button class="btn-primary" id="btn-salvar" onclick="salvar()">✓ Registrar Venda</button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/app.js"></script>
+<script src="../js/vendas.js"></script>
+</body>
+</html>
