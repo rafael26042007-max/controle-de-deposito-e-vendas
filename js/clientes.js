@@ -147,5 +147,46 @@ function salvar() {
   if (editandoId) {
     const idx = clientes.findIndex(c => c.id === editandoId);
     clientes[idx] = { ...clientes[idx], ...dados};
+  } else {
+    dados.id = Date.now();
+    dados.atraso = 0;
+    clientes.push(dados);
+  }
+  fecharModal();
+  atualizarResumo();
+  rederTabela();
+}
+
+// ── ALTERNAR STATUS ──
+function  alternarStatus(id) {
+  const  c = clientes.find(x => x.id === id);
+  if (!c) return;
+  atualizarResumo();
+  renderTabela();
+}
+
+// ── GERAR CÓDIGO ──
+function  gerarCodigo() {
+  const num = String(clientes.length + 1).padStart(3, '0');
+  return `C${num}`;
+}
+
+// ── DATA ──
+function atualizarData() {
+  const el = document.getElementById('data-atual');
+  if (el) {
+    el.textContent = new Date().toLocaleDateString('pt-BR', {
+      weekday: 'long', day: "numeric", month: "long", year: "numeric"
+    });
   }
 }
+
+// ── FECHA MODAL CLICANDO FORA ──
+document.getElementById('modal').addEventListener('click', function (e) {
+  if (e.target === this) fecharModal();
+});
+
+// ── FECHA COM ESC ──
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') fecharModal();
+});
