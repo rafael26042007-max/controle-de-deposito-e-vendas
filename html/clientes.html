@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NhLençois — Clientes</title>
+  <meta name="theme-color" content="#080A10">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/clientes.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-ico">🧶</div>
+      <div class="sidebar-logo-name">NhLençois</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Principal</div>
+      <a class="nav-item" href="dashboard.html">
+        <span class="nav-item-ico">📊</span>Dashboard
+      </a>
+      <div class="nav-section-label">Cadastros</div>
+      <a class="nav-item" href="produtos.html">
+        <span class="nav-item-ico">📦</span>Produtos
+      </a>
+      <a class="nav-item" href="materia.html">
+        <span class="nav-item-ico">🧵</span>Matéria-Prima
+      </a>
+      <a class="nav-item" href="vendedores.html">
+        <span class="nav-item-ico">🧑‍💼</span>Vendedores
+      </a>
+      <a class="nav-item active">
+        <span class="nav-item-ico">👥</span>Clientes
+      </a>
+      <div class="nav-section-label">Operações</div>
+      <a class="nav-item" href="producao.html">
+        <span class="nav-item-ico">🏭</span>Produção
+      </a>
+      <a class="nav-item" href="vendas.html">
+        <span class="nav-item-ico">🛒</span>Vendas
+        <span class="nav-badge">3</span>
+      </a>
+      <a class="nav-item" href="notas.html">
+        <span class="nav-item-ico">🧾</span>Notas Fiscais
+      </a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="sidebar-user-av">👤</div>
+      <div>
+        <div class="sidebar-user-name">Administrador</div>
+        <div class="sidebar-user-role">Admin</div>
+      </div>
+      <button class="sidebar-user-exit" onclick="window.location.href='login.html'" title="Sair">🚪</button>
+    </div>
+  </aside>
+
+  <!-- conteúdo -->
+  <main class="main">
+
+    <div class="topbar">
+      <div class="topbar-title">Clientes</div>
+      <div class="topbar-right">
+        <div class="topbar-date" id="data-atual"></div>
+        <div class="topbar-notif">🔔<div class="notif-dot"></div></div>
+      </div>
+    </div>
+
+    <div class="page">
+
+      <div class="page-header">
+        <div>
+          <div class="page-title">Clientes</div>
+          <div class="page-sub">Cadastre e gerencie os clientes da empresa</div>
+        </div>
+        <button class="btn-primary" onclick="abrirModal()">
+          ＋ Novo Cliente
+        </button>
+      </div>
+
+      <!-- Resumo -->
+      <div class="resumo-grid">
+        <div class="resumo-card">
+          <div class="resumo-ico azul">👥</div>
+          <div>
+            <div class="resumo-val" id="total-clientes">0</div>
+            <div class="resumo-lbl">Total de Clientes</div>
+          </div>
+        </div>
+        <div class="resumo-card">
+          <div class="resumo-ico verde">✓</div>
+          <div>
+            <div class="resumo-val" id="total-ativos">0</div>
+            <div class="resumo-lbl">Clientes Ativos</div>
+          </div>
+        </div>
+        <div class="resumo-card">
+          <div class="resumo-ico vermelho">🔒</div>
+          <div>
+            <div class="resumo-val" id="total-bloqueados">0</div>
+            <div class="resumo-lbl">Bloqueados</div>
+          </div>
+        </div>
+        <div class="resumo-card">
+          <div class="resumo-ico cinza">⚠️</div>
+          <div>
+            <div class="resumo-val" id="total-atraso">0</div>
+            <div class="resumo-lbl">Com Parcelas em Atraso</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <div class="search-box">
+          <span>🔍</span>
+          <input type="text" id="pesquisa"
+                 placeholder="Buscar por nome, código ou telefone..."
+                 oninput="renderTabela()">
+        </div>
+        <select class="filter-select" id="filtro-status" onchange="renderTabela()">
+          <option value="todos">Todos</option>
+          <option value="ativo">Ativos</option>
+          <option value="bloqueado">Bloqueados</option>
+        </select>
+      </div>
+
+      <!-- Tabela -->
+      <div class="table-card">
+        <table>
+          <thead>
+          <tr>
+            <th>Código</th>
+            <th>Cliente</th>
+            <th>Telefone</th>
+            <th>Cidade</th>
+            <th>Parcelas em Atraso</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+          </thead>
+          <tbody id="tabela-body"></tbody>
+        </table>
+        <div class="pagination">
+          <div class="pagination-info" id="pag-info">0 clientes</div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">➕ Novo Cliente</div>
+      <button class="modal-close" onclick="fecharModal()">✕</button>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Código</label>
+        <input class="form-input" type="text" id="f-codigo"
+               placeholder="Gerado automaticamente" disabled>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Status</label>
+        <select class="form-select" id="f-status">
+          <option value="ativo">Ativo</option>
+          <option value="bloqueado">Bloqueado</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Nome Completo / Razão Social *</label>
+      <input class="form-input" type="text" id="f-nome"
+             placeholder="Ex: Loja Mania do Lar">
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Telefone</label>
+        <input class="form-input" type="tel" id="f-telefone"
+               placeholder="(47) 99999-0000">
+      </div>
+      <div class="form-group">
+        <label class="form-label">CPF / CNPJ</label>
+        <input class="form-input" type="text" id="f-documento"
+               placeholder="000.000.000-00">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Cidade</label>
+        <input class="form-input" type="text" id="f-cidade"
+               placeholder="Ex: Blumenau">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Estado</label>
+        <select class="form-select" id="f-estado">
+          <option value="">Selecione...</option>
+          <option value="SC">SC</option>
+          <option value="PR">PR</option>
+          <option value="RS">RS</option>
+          <option value="SP">SP</option>
+          <option value="RJ">RJ</option>
+          <option value="MG">MG</option>
+          <option value="Outro">Outro</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">E-mail</label>
+      <input class="form-input" type="email" id="f-email"
+             placeholder="email@exemplo.com">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Observações</label>
+      <input class="form-input" type="text" id="f-obs"
+             placeholder="Ex: Cliente atacadista, pagamento à vista...">
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="fecharModal()">Cancelar</button>
+      <button class="btn-primary" onclick="salvar()">✓ Salvar</button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/app.js"></script>
+<script src="../js/clientes.js"></script>
+</body>
+</html>
