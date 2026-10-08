@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NhLençois — Matéria-Prima</title>
+  <meta name="theme-color" content="#080A10">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/materia.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-ico">🧶</div>
+      <div class="sidebar-logo-name">NhLençois</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Principal</div>
+      <a class="nav-item" href="dashboard.html">
+        <span class="nav-item-ico">📊</span>Dashboard
+      </a>
+      <div class="nav-section-label">Cadastros</div>
+      <a class="nav-item" href="produtos.html">
+        <span class="nav-item-ico">📦</span>Produtos
+      </a>
+      <a class="nav-item active">
+        <span class="nav-item-ico">🧵</span>Matéria-Prima
+      </a>
+      <a class="nav-item" href="vendedores.html">
+        <span class="nav-item-ico">🧑‍💼</span>Vendedores
+      </a>
+      <a class="nav-item" href="clientes.html">
+        <span class="nav-item-ico">👥</span>Clientes
+      </a>
+      <div class="nav-section-label">Operações</div>
+      <a class="nav-item" href="producao.html">
+        <span class="nav-item-ico">🏭</span>Produção
+      </a>
+      <a class="nav-item" href="vendas.html">
+        <span class="nav-item-ico">🛒</span>Vendas
+        <span class="nav-badge">3</span>
+      </a>
+      <a class="nav-item" href="notas.html">
+        <span class="nav-item-ico">🧾</span>Notas Fiscais
+      </a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="sidebar-user-av">👤</div>
+      <div>
+        <div class="sidebar-user-name">Administrador</div>
+        <div class="sidebar-user-role">Admin</div>
+      </div>
+      <button class="sidebar-user-exit" onclick="window.location.href='login.html'" title="Sair">🚪</button>
+    </div>
+  </aside>
+
+  <!-- conteúdo -->
+  <main class="main">
+
+    <div class="topbar">
+      <div class="topbar-title">Matéria-Prima</div>
+      <div class="topbar-right">
+        <div class="topbar-date" id="data-atual"></div>
+        <div class="topbar-notif">🔔<div class="notif-dot"></div></div>
+      </div>
+    </div>
+
+    <div class="page">
+
+      <div class="page-header">
+        <div>
+          <div class="page-title">Matéria-Prima</div>
+          <div class="page-sub">Controle de estoque de insumos — kg, metros e unidades</div>
+        </div>
+        <button class="btn-primary" onclick="abrirModal()">
+          ＋ Nova Matéria-Prima
+        </button>
+      </div>
+
+      <!-- Resumo -->
+      <div class="resumo-grid">
+        <div class="resumo-card">
+          <div class="resumo-ico azul">🧵</div>
+          <div>
+            <div class="resumo-val" id="total-materiais">0</div>
+            <div class="resumo-lbl">Total de Materiais</div>
+          </div>
+        </div>
+        <div class="resumo-card">
+          <div class="resumo-ico verde">✓</div>
+          <div>
+            <div class="resumo-val" id="total-ok">0</div>
+            <div class="resumo-lbl">Estoque Normal</div>
+          </div>
+        </div>
+        <div class="resumo-card">
+          <div class="resumo-ico amarelo">⚠️</div>
+          <div>
+            <div class="resumo-val" id="total-baixo">0</div>
+            <div class="resumo-lbl">Estoque Baixo</div>
+          </div>
+        </div>
+        <div class="resumo-card">
+          <div class="resumo-ico vermelho">🔴</div>
+          <div>
+            <div class="resumo-val" id="total-critico">0</div>
+            <div class="resumo-lbl">Estoque Crítico</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <div class="search-box">
+          <span>🔍</span>
+          <input type="text" id="pesquisa"
+                 placeholder="Buscar por nome ou código..."
+                 oninput="renderTabela()">
+        </div>
+        <select class="filter-select" id="filtro-unidade" onchange="renderTabela()">
+          <option value="todos">Todas as unidades</option>
+          <option value="kg">Por Quilo (kg)</option>
+          <option value="m">Por Metro (m)</option>
+          <option value="un">Por Unidade (un)</option>
+        </select>
+        <select class="filter-select" id="filtro-status" onchange="renderTabela()">
+          <option value="todos">Todos os status</option>
+          <option value="ok">Normal</option>
+          <option value="baixo">Baixo</option>
+          <option value="critico">Crítico</option>
+        </select>
+      </div>
+
+      <!-- Tabela -->
+      <div class="table-card">
+        <table>
+          <thead>
+          <tr>
+            <th>Código</th>
+            <th>Material</th>
+            <th>Unidade</th>
+            <th>Estoque Atual</th>
+            <th>Mínimo</th>
+            <th>Situação</th>
+            <th>Ações</th>
+          </tr>
+          </thead>
+          <tbody id="tabela-body"></tbody>
+        </table>
+        <div class="pagination">
+          <div class="pagination-info" id="pag-info">0 materiais</div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+</div>
+
+<!-- Modal Cadastro/Edição -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">➕ Nova Matéria-Prima</div>
+      <button class="modal-close" onclick="fecharModal()">✕</button>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Código</label>
+        <input class="form-input" type="text" id="f-codigo"
+               placeholder="Gerado automaticamente" disabled>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Unidade de Medida *</label>
+        <select class="form-select" id="f-unidade">
+          <option value="kg">Quilo (kg)</option>
+          <option value="m">Metro (m)</option>
+          <option value="un">Unidade (un)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Nome do Material *</label>
+      <input class="form-input" type="text" id="f-nome"
+             placeholder="Ex: Malha 100% Algodão">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Categoria</label>
+      <select class="form-select" id="f-categoria">
+        <option value="Tecido">Tecido</option>
+        <option value="Linha">Linha</option>
+        <option value="Elástico">Elástico</option>
+        <option value="Embalagem">Embalagem</option>
+        <option value="Etiqueta">Etiqueta</option>
+        <option value="Outro">Outro</option>
+      </select>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label" id="label-qtd">Quantidade Inicial</label>
+        <input class="form-input" type="number" id="f-qtd"
+               placeholder="0" min="0" step="0.01">
+      </div>
+      <div class="form-group">
+        <label class="form-label" id="label-min">Quantidade Mínima</label>
+        <input class="form-input" type="number" id="f-qtd-min"
+               placeholder="10" min="0" step="0.01">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Observações</label>
+      <input class="form-input" type="text" id="f-obs"
+             placeholder="Ex: Fornecedor X, cor natural...">
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="fecharModal()">Cancelar</button>
+      <button class="btn-primary" onclick="salvar()">✓ Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Entrada de Estoque -->
+<div class="modal-overlay" id="modal-entrada">
+  <div class="modal-entrada">
+    <div class="modal-header">
+      <div class="modal-title">📥 Entrada de Estoque</div>
+      <button class="modal-close" onclick="fecharEntrada()">✕</button>
+    </div>
+
+    <div class="entrada-info">
+      <strong id="entrada-nome"></strong>
+      <span id="entrada-atual"></span>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" id="label-entrada">Quantidade Entrando</label>
+      <input class="form-input" type="number" id="f-entrada"
+             placeholder="0" min="0.01" step="0.01">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Observação</label>
+      <input class="form-input" type="text" id="f-entrada-obs"
+             placeholder="Ex: Compra fornecedor X">
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="fecharEntrada()">Cancelar</button>
+      <button class="btn-primary" onclick="confirmarEntrada()">✓ Confirmar Entrada</button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/app.js"></script>
+<script src="../js/materia.js"></script>
+</body>
+</html>
