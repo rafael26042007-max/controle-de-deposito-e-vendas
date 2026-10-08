@@ -110,5 +110,172 @@ function vereficarCliente() {
 function calcularTotal() {
   const produtoEl = document.getElementById('f-produto');
   const qtd = parseInt(document.getElementById('f-qtd').value) || 0;
-  const parcelas
+  const parcelas = parseInt(document.getElementById('f-parcela').value) || 1;
+
+  const option = produtoEl.options[produtoEl.selectedIndex];
+  const preco = parseFloat(option?.dataset?.preco) || 0;
+  return;
+
+  if (preco === 0 || qtd === 0) {
+    document.getElementById('venda-resumo').style.display = 'none';
+    document.getElementById('parcelas-box').classList.remove('show');
+    return;
+  }
+
+  const subtotal = preco * qtd;
+
+  // juros simples 1% ao mês a partir da 3ª parcela
+  let juros = 0;
+  if (parcelas >= 3) {
+    juros = subtotal * 0.01 * (parcelas - 2);
+  }
+
+  const total = subtotal + juros;
+  const valorParcela = total / parcelas;
+
+  document.getElementById('r-subtotal').textContent =
+    'R$' + subtotal.toLocaleString('pt-BR', { minimumFractionDigits: 2});
+  document.getElementById('r-juros').textContent =
+    juros > 0
+      ? 'R$ ' + juros.toLocaleString('pt-BR', { minimumFractionDigits: 2})
+      : '- Sem juros';
+  document.getElementById('r-total').textContent =
+    'R$ ' + total.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+
+  document.getElementById('venda-resumo').style.display = 'block';
+
+  // detalhamento de parcelas
+  const hoje = new Date();
+  let parcelasHtml = '';
+  for (let i = 1; i <= parcelas; i++) {
+    const venc = new Date(hoje);
+    venc.setMonth(venc.getMonth() + i);
+    const temJuros = parcelas >= 3 && i >= 3;
+    parcelasHtml += `
+      <div class="parcela-row">
+        <span class="parcela-num">${i}ª parcela</span>
+        <span class="parcela-val">R$ ${valorParcela.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+        <span style="color:var(--muted);font-size:11px">${venc.toLocaleDateString('pt-BR')}</span>
+        ${temJuros ? '<span class="parcela-juros">+ juros 1%</span>' : ''}
+      </div>`;
+  }
+
+  document.getElementById('parcelas-lista').innerHTML = parcelasHtml;
+  document.getElementById('parcela-box').classList.add('show');
 }
+
+// ── MODAL ──
+function abrirModal() {
+  editandoId = null;
+  document.getElementById('modal-title').textContent = '🛒 Nova Venda';
+  document.getElementById('f-cliente').value = '';
+  document.getElementById('f-vendedor').value = '';
+  document.getElementById('f-produto').value = '';
+  document.getElementById('f-qtd').value = '';
+  document.getElementById('f-parcelas').value = '1';
+  document.getElementById('f-status').value = 'pendente';
+  document.getElementById('alert-bloquado').classList.remove('show');
+  document.getElementById('venda-resumo').style.display = 'none';
+  document.getElementById('parcela-box').classList.remove('show');
+  document.getElementById('btn-salvar').disabled = false;
+  document.getElementById('modal').classList.add('show');
+}
+
+function fecharModal() {
+  document.getElementById('modal').classList.remove('show');
+  editandoId = null;
+}
+
+// ── SALVAR ──
+function salvar() {
+  const clienteId = document.getElementById('f-cliente').value;
+  const vendedorId = document.getElementById('f-vendedor').value;
+  const produdoEl = document.getElementById('f-produto');
+  const qtd = parseInt(document.getElementById('f-qtd').value) || 0;
+  const parcelas = parseInt(document.getElementById('f-parcelas').value) || 1;
+  const status = document.getElementById('f-status').value;
+
+  if (!clienteId || !vendedorId || !produdoEl.value || qtd <= 0) {
+    alert('Preencha todos os campos obrigatórios.');
+    return;
+  }
+
+  const option = produdoEl.options[produdoEl.selectedIndex];
+  const preco = parseFloat(option.dataset.preco);
+  const subtotal = preco * qtd;
+  const juros = parcelas >= 3 ? subtotal * 0.01 * (parcelas - 2) : 0;
+  const total = subtotal + juros;
+
+  const clienteNome = document.getElementById('f-clientes').options[document.getElementById('f-cliente').selectedIndex].text.replace(' 🔒', '');
+  const vendedorNome = document.getElementById('f-vendedor').options[document.getElementById('f-vendedor').selectedIndex].text;
+  const produtoNome = option.text.split(' - ')[0];
+
+  const num = String(vendas.length + 1).padStart(3, '0');
+
+  vendas.push({
+    id: Date.now(),
+    codigo: `VD${num}`,
+    cliente: clienteNome,
+    vendedor: vendedorNome,
+    produto: produtoNome,
+    qtd,
+    subtotal,
+    juros,
+    total,
+    parcelas,
+    status,
+  });
+  fecharModal();
+  atualizarResumo();
+  renderTabela();
+}
+
+// ── VER DETALHES ──
+function verDetalhes(id) {
+  const v = vendas.find(x => x.id === id);
+  if (!v) return;
+  alert(`📋 Venda ${v.codigo}\n\nCliente: ${v.cliente}\nVendedor: ${v.vendedor}\nProduto: ${v.produto} (${v.qtd} un.)\nSubtotal: R$ ${v.subtotal.toFixed(2)}\nJuros: R$ ${v.juros.toFixed(2)}\nTotal: R$ ${v.total.toFixed(2)}\nParcelas: ${v.parcelas}x\nStatus: ${v.status}`);
+}
+
+// ── MUDAR STATUS ──
+function mudarStatus(id) {
+  const v = vendas.find(x => x.id === id);
+  if (!v) return;
+
+  const ordem = ['pendente', 'producao', 'enviado', 'entregue'];
+  const idx = ordem.indexOf(v.status);
+
+  if (idx === -1 || v.status === 'atraso') {
+    alert('Esta venda está em atraso e não pode ter o status alterado automaticamente.');
+    return;
+  }
+
+  if (idx === ordem.length - 1) {
+    alert('Esta venda já entregue.');
+    return;
+  }
+
+  v.status = ordem[idx + 1];
+  atualizarResumo();
+  renderTabela();
+}
+
+// ── DATA ──
+function atualizarData() {
+  const el = document.getElementById('data-atual');
+  if (el) {
+    el.textContent = new Date().toLocaleDateString('pt-BR', {
+      weekday: "long", day: "numeric", month: "long", year: "numeric"
+    });
+  }
+}
+
+// ── FECHA MODAL CLICANDO FORA ──
+document.getElementById('modal').addEventListener('click', function (e) {
+  if (e.target === this) fecharModal();
+});
+
+// ── FECHA COM ESC ──
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') fecharModal();
+});
