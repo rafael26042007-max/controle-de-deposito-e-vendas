@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NhLençois — Notas Fiscais</title>
+  <meta name="theme-color" content="#080A10">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/notas.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-ico">🧶</div>
+      <div class="sidebar-logo-name">NhLençois</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Principal</div>
+      <a class="nav-item" href="dashboard.html">
+        <span class="nav-item-ico">📊</span>Dashboard
+      </a>
+      <div class="nav-section-label">Cadastros</div>
+      <a class="nav-item" href="produtos.html">
+        <span class="nav-item-ico">📦</span>Produtos
+      </a>
+      <a class="nav-item" href="materia.html">
+        <span class="nav-item-ico">🧵</span>Matéria-Prima
+      </a>
+      <a class="nav-item" href="vendedores.html">
+        <span class="nav-item-ico">🧑‍💼</span>Vendedores
+      </a>
+      <a class="nav-item" href="clientes.html">
+        <span class="nav-item-ico">👥</span>Clientes
+      </a>
+      <div class="nav-section-label">Operações</div>
+      <a class="nav-item" href="producao.html">
+        <span class="nav-item-ico">🏭</span>Produção
+      </a>
+      <a class="nav-item" href="vendas.html">
+        <span class="nav-item-ico">🛒</span>Vendas
+        <span class="nav-badge">3</span>
+      </a>
+      <a class="nav-item active">
+        <span class="nav-item-ico">🧾</span>Notas Fiscais
+      </a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="sidebar-user-av">👤</div>
+      <div>
+        <div class="sidebar-user-name">Administrador</div>
+        <div class="sidebar-user-role">Admin</div>
+      </div>
+      <button class="sidebar-user-exit" onclick="window.location.href='login.html'" title="Sair">🚪</button>
+    </div>
+  </aside>
+
+  <!-- conteúdo -->
+  <main class="main">
+
+    <div class="topbar">
+      <div class="topbar-title">Notas Fiscais</div>
+      <div class="topbar-right">
+        <div class="topbar-date" id="data-atual"></div>
+        <div class="topbar-notif">🔔<div class="notif-dot"></div></div>
+      </div>
+    </div>
+
+    <div class="page">
+
+      <div class="page-header">
+        <div>
+          <div class="page-title">Notas Fiscais</div>
+          <div class="page-sub">Consulte e verifique todas as notas emitidas</div>
+        </div>
+      </div>
+
+      <!-- Resumo -->
+      <div class="resumo-grid">
+        <div class="resumo-card">
+          <div class="resumo-ico azul">🧾</div>
+          <div>
+            <div class="resumo-val" id="total-notas">0</div>
+            <div class="resumo-lbl">Total de Notas</div>
+          </div>
+        </div>
+        <div class="resumo-card">
+          <div class="resumo-ico verde">💰</div>
+          <div>
+            <div class="resumo-val" id="total-valor">R$ 0</div>
+            <div class="resumo-lbl">Valor Total Emitido</div>
+          </div>
+        </div>
+        <div class="resumo-card">
+          <div class="resumo-ico amarelo">📅</div>
+          <div>
+            <div class="resumo-val" id="total-mes">0</div>
+            <div class="resumo-lbl">Emitidas Este Mês</div>
+          </div>
+        </div>
+        <div class="resumo-card">
+          <div class="resumo-ico cinza">🔍</div>
+          <div>
+            <div class="resumo-val" id="total-clientes-nf">0</div>
+            <div class="resumo-lbl">Clientes Atendidos</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <div class="search-box">
+          <span>🔍</span>
+          <input type="text" id="pesquisa"
+                 placeholder="Buscar por código NF, cliente ou vendedor..."
+                 oninput="renderTabela()">
+        </div>
+        <input type="date" class="filter-date" id="filtro-data-ini"
+               onchange="renderTabela()" title="Data inicial">
+        <input type="date" class="filter-date" id="filtro-data-fim"
+               onchange="renderTabela()" title="Data final">
+        <button class="btn-secondary" onclick="limparFiltros()" style="white-space:nowrap">
+          ✕ Limpar filtros
+        </button>
+      </div>
+
+      <!-- Tabela -->
+      <div class="table-card">
+        <table>
+          <thead>
+          <tr>
+            <th>Código NF</th>
+            <th>Cliente</th>
+            <th>Vendedor</th>
+            <th>Produto</th>
+            <th>Parcelas</th>
+            <th>Valor Total</th>
+            <th>Data Emissão</th>
+            <th>Ações</th>
+          </tr>
+          </thead>
+          <tbody id="tabela-body"></tbody>
+        </table>
+        <div class="pagination">
+          <div class="pagination-info" id="pag-info">0 notas</div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+</div>
+
+<!-- Modal Detalhes da NF -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">🧾 Nota Fiscal</div>
+      <button class="modal-close" onclick="fecharModal()">✕</button>
+    </div>
+
+    <div class="nf-box">
+      <div class="nf-header">
+        <div>
+          <div class="nf-header-titulo">NhLençois — Nota Fiscal</div>
+          <div class="nf-header-codigo" id="nf-codigo"></div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:11px;color:rgba(0,0,0,.6)">Emissão</div>
+          <div style="font-size:12px;font-weight:700;color:#000" id="nf-data"></div>
+        </div>
+      </div>
+
+      <div class="nf-body">
+        <div class="nf-row">
+          <span class="nf-label">Código da Venda</span>
+          <span class="nf-val" id="nf-venda"></span>
+        </div>
+        <div class="nf-row">
+          <span class="nf-label">Cliente</span>
+          <span class="nf-val" id="nf-cliente"></span>
+        </div>
+        <div class="nf-row">
+          <span class="nf-label">Vendedor</span>
+          <span class="nf-val" id="nf-vendedor"></span>
+        </div>
+        <div class="nf-row">
+          <span class="nf-label">Produto</span>
+          <span class="nf-val" id="nf-produto"></span>
+        </div>
+        <div class="nf-row">
+          <span class="nf-label">Quantidade</span>
+          <span class="nf-val" id="nf-qtd"></span>
+        </div>
+        <div class="nf-row">
+          <span class="nf-label">Parcelas</span>
+          <span class="nf-val" id="nf-parcelas"></span>
+        </div>
+        <div class="nf-row">
+          <span class="nf-label">Subtotal</span>
+          <span class="nf-val" id="nf-subtotal"></span>
+        </div>
+        <div class="nf-row">
+          <span class="nf-label">Juros</span>
+          <span class="nf-val" id="nf-juro"></span>
+        </div>
+      </div>
+
+      <div class="nf-total">
+        <span>TOTAL</span>
+        <span class="nf-total-val" id="nf-total"></span>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="fecharModal()">Fechar</button>
+      <button class="btn-primary" onclick="imprimirNF()">🖨️ Imprimir</button>
+    </div>]
+
+    <div class="nf-row nf-email-row">
+      <span class="nf-label">E-mail do cliente</span>
+      <input type="email" id="nf-email-destino"
+             placeholder="email@cliente.com">
+    </div>
+
+    <button class="btn-primary" onclick="enviarNFPorEmail()">📧 Enviar por E-mail</button>
+  </div>
+</div>
+
+<script src="../js/app.js"></script>
+<script src="../js/notas.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>emailjs.init('oeOUhO9DRCE02o_s_');</script>
+<script src="../js/notas.js"></script>
+</body>
+</html>
