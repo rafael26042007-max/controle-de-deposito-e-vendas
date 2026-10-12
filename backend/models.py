@@ -1,83 +1,89 @@
-from sqlalchemy import Column, Integer, String, Boolean, Numeric, DateTime, Text, ForeignKey
+from sqlalchemy import Column, Integer, String, Numeric, DateTime, ForeignKey
 from sqlalchemy.sql import func
 from database import Base
 
-# ── USUÁRIOS ──
 class Usuario(Base):
-  __tablename__ = "usuarios"
-  id = Column(Integer, primary_key=True, index=True)
-  username = Column(String(50), unique=True, nullable=False)
-  senha_hash = Column(String(255), nullable=False)
-  perfil = Column(String(20), nullable=False)  # admin, vendedor, producao
-  ativo = Column(Boolean, default=True)
+    __tablename__ = "usuarios"
+    id = Column(Integer, primary_key=True, index=True)
+    nome = Column(String(100), nullable=False)
+    usuario = Column(String(50), unique=True, nullable=False)
+    senha = Column(String(200), nullable=False)
+    perfil = Column(String(20), nullable=False, default="vendedor")
 
-# ── PRODUTOS ──
 class Produto(Base):
-  __tablename__ = "produtos"
-  id = Column(Integer, primary_key=True, index=True)
-  codigo = Column(String(50), unique=True, nullable=False)
-  nome = Column(String(150), nullable=False)
-  categoria = Column(String(50))
-  unidade = Column(String(20), default='un')
-  preco_venda = Column(Numeric(12, 2), default=0)
-  quantidade = Column(Numeric(12, 2), default=0)
-  estoque_minimo = Column(Numeric(12, 2), default=0)
-  ativo = Column(Boolean, default=True)
-  criado_em = Column(DateTime, server_default=func.now())
+    __tablename__ = "produtos"
+    id = Column(Integer, primary_key=True, index=True)
+    codigo = Column(String(20))
+    nome = Column(String(100), nullable=False)
+    categoria = Column(String(50))
+    unidade = Column(String(20))
+    preco = Column(Numeric(10, 2))
+    qtd = Column(Integer, default=0)
+    qtd_min = Column(Integer, default=10)
+    cor = Column(String(50))
+    obs = Column(String(200))
 
-# ── MATÉRIA-PRIMA ──
-class Materia(Base):
-  __tablename__ = "materias"
-  id = Column(Integer, primary_key=True, index=True)
-  codigo = Column(String(50), unique=True, nullable=False)
-  nome = Column(String(150), nullable=False)
-  unidade = Column(String(20), nullable=False)
-  quantidade = Column(Numeric(12, 2), default=0)
-  estoque_minimo = Column(Numeric(12, 2), default=0)
-  ativo = Column(Boolean, default=True)
+class MateriaPrima(Base):
+    __tablename__ = "materias_primas"
+    id        = Column(Integer, primary_key=True, index=True)
+    codigo    = Column(String(20))
+    nome      = Column(String(150), nullable=False)
+    categoria = Column(String(50))
+    unidade   = Column(String(5))
+    qtd       = Column(Numeric(10, 2), default=0)
+    qtd_min   = Column(Numeric(10, 2), default=0)
+    obs       = Column(String(300))
 
-# ── VENDEDORES ──
 class Vendedor(Base):
-  __tablename__ = "vendedores"
-  id = Column(Integer, primary_key=True, index=True)
-  codigo = Column(String(50), unique=True, nullable=False)
-  nome = Column(String(150), nullable=False)
-  telefone = Column(String(20))
-  email = Column(String(100))
-  comissao = Column(Numeric(5, 2), default=0)
-  ativo = Column(Boolean, default=True)
+    __tablename__ = "vendedores"
+    id       = Column(Integer, primary_key=True, index=True)
+    codigo   = Column(String(20))
+    nome     = Column(String(150), nullable=False)
+    telefone = Column(String(20))
+    email    = Column(String(100))
+    comissao = Column(Numeric(5, 2), default=5)
+    status   = Column(String(20), default='ativo')
 
-# ── CLIENTES ──
-class Cliente(Base):
-  __tablename__ = "clientes"
-  id = Column(Integer, primary_key=True, index=True)
-  codigo = Column(String(50), unique=True, nullable=False)
-  nome = Column(String(150), nullable=False)
-  telefone = Column(String(20))
-  email = Column(String(100))
-  cidade = Column(String(100))
-  bloqueado = Column(Boolean, default=False)
-
-# ── VENDAS ──
 class Venda(Base):
   __tablename__ = "vendas"
-  id = Column(Integer, primary_key=True, index=True)
-  codigo = Column(String(50), unique=True, nullable=False)
-  cliente_id = Column(Integer, ForeignKey("clientes.id"))
+  id          = Column(Integer, primary_key=True, index=True)
+  codigo      = Column(String(20))
+  cliente_id  = Column(Integer, ForeignKey("clientes.id"))
   vendedor_id = Column(Integer, ForeignKey("vendedores.id"))
-  produto_id = Column(Integer, ForeignKey("produtos.id"))
-  quantidade = Column(Numeric(12, 2))
-  subtotal = Column(Numeric(12, 2))
-  juros = Column(Numeric(12, 2), default=0)
-  total = Column(Numeric(12, 2))
-  parcelas = Column(Integer, default=1)
-  status = Column(String(20), default='pendente')
-  criado_em = Column(DateTime, server_default=func.now())
+  produto_id  = Column(Integer, ForeignKey("produtos.id"))
+  qtd         = Column(Integer, nullable=False)
+  subtotal    = Column(Numeric(10, 2), default=0)
+  juros       = Column(Numeric(10, 2), default=0)
+  total       = Column(Numeric(10, 2), default=0)
+  parcelas    = Column(Integer, default=1)
+  status      = Column(String(20), default='pendente')
+  data        = Column(String(50))          # ← linha nova
 
-# ── NOTAS FISCAIS ──
 class NotaFiscal(Base):
-  __tablename__ = "notas_fiscais"
-  id = Column(Integer, primary_key=True, index=True)
-  codigo = Column(String(50), unique=True, nullable=False)
-  venda_id = Column(Integer, ForeignKey("vendas.id"))
-  criado_em = Column(DateTime, server_default=func.now())
+    __tablename__ = "notas_fiscais"
+    id = Column(Integer, primary_key=True, index=True)
+    venda_id = Column(Integer, ForeignKey("vendas.id"))
+    numero = Column(String(50))
+    data = Column(DateTime, server_default=func.now())
+
+class Cliente(Base):
+    __tablename__ = "clientes"
+    id        = Column(Integer, primary_key=True, index=True)
+    codigo    = Column(String(20))
+    nome      = Column(String(150), nullable=False)
+    telefone  = Column(String(20))
+    email     = Column(String(100))
+    documento = Column(String(30))
+    cidade    = Column(String(100))
+    estado    = Column(String(2))
+    status    = Column(String(20), default='ativo')
+    atraso    = Column(Integer, default=0)
+    obs       = Column(String(300))
+
+class Producao(Base):
+  __tablename__ = "producoes"
+  id         = Column(Integer, primary_key=True, index=True)
+  produto_id = Column(Integer, ForeignKey("produtos.id"))
+  qtd        = Column(Integer, nullable=False)
+  data       = Column(String(50))
+  obs        = Column(String(500))
