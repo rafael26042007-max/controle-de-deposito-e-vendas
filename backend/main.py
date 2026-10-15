@@ -3,10 +3,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from database import engine
 import models
-from routers import auth, produtos, clientes, vendedores, materias, vendas, producao
-models.Base.metadata.create_all(bind=engine)
-
+from routers import produtos, clientes, vendedores, materias, vendas, producao, usuarios, auth
 app = FastAPI(title="NhLencois API", version="1.0.0")
+
+models.Base.metadata.create_all(bind=engine)
 
 app.add_middleware(
   CORSMiddleware,
@@ -23,6 +23,7 @@ app.include_router(vendedores.router)
 app.include_router(materias.router)
 app.include_router(vendas.router)
 app.include_router(producao.router)
+app.include_router(usuarios.router)
 
 app.mount("/", StaticFiles(directory="..", html=True), name="frontend")
 

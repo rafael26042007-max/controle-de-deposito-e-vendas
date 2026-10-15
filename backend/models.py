@@ -3,12 +3,14 @@ from sqlalchemy.sql import func
 from database import Base
 
 class Usuario(Base):
-    __tablename__ = "usuarios"
-    id = Column(Integer, primary_key=True, index=True)
-    nome = Column(String(100), nullable=False)
-    usuario = Column(String(50), unique=True, nullable=False)
-    senha = Column(String(200), nullable=False)
-    perfil = Column(String(20), nullable=False, default="vendedor")
+  __tablename__ = "usuarios"
+  id      = Column(Integer, primary_key=True, index=True)
+  codigo  = Column(String(20))                               # ← adiciona aqui
+  nome    = Column(String(100), nullable=False)
+  usuario = Column(String(50), unique=True, nullable=False)
+  senha   = Column(String(200), nullable=False)
+  perfil  = Column(String(20), nullable=False, default="vendedor")
+  status  = Column(String(20), default="ativo")              # ← adiciona aqui
 
 class Produto(Base):
     __tablename__ = "produtos"

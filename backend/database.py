@@ -2,7 +2,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-DATABASE_URL = "postgresql+psycopg://postgres:RR19283746@localhost:5432/nhlecois"
+#DATABASE_URL = "postgresql+psycopg://postgres:RR19283746@localhost:5432/nhlecois"
+
+#caso seja outro computador sem ter o postgresql
+DATABASE_URL = "mysql+pymysql://root:root@localhost:3306/nhlencois"
 
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
