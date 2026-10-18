@@ -1,86 +1,88 @@
-// ── DADOS DE EXEMPLO ──
-let notas = [
-  {
-    id: 1, codigo: 'NF-ABC123456', codigoVenda: 'VD001',
-    cliente: 'Loja Mania do Lar', vendedor: 'Carlos Silva',
-    produto: 'Lençol Casal Branco', qtd: 10,
-    subtotal: 650.00, juros: 0, total: 650.00, parcelas: 1,
-    data: '06/10/2026 08:30'
-  },
-  {
-    id: 2, codigo: 'NF-DEF789012', codigoVenda: 'VD002',
-    cliente: 'Mercado Têxtil SP', vendedor: 'Ana Souza',
-    produto: 'Fronha Branca', qtd: 50,
-    subtotal: 900.00, juros: 9.00, total: 909.00, parcelas: 3,
-    data: '06/10/2026 10:15'
-  },
-  {
-    id: 3, codigo: 'NF-GHI345678', codigoVenda: 'VD003',
-    cliente: 'Armarinho Central', vendedor: 'Carlos Silva',
-    produto: 'Camiseta Básica P', qtd: 20,
-    subtotal: 640.00, juros: 12.80, total: 652.80, parcelas: 4,
-    data: '07/10/2026 09:00'
-  },
-  {
-    id: 4, codigo: 'NF-JKL901234', codigoVenda: 'VD004',
-    cliente: 'Distribuidora Norte', vendedor: 'Marcos Pereira',
-    produto: 'Toalha de Banho', qtd: 8,
-    subtotal: 304.00, juros: 0, total: 304.00, parcelas: 2,
-    data: '07/10/2026 14:20'
-  },
-  {
-    id: 5, codigo: 'NF-MNO567890', codigoVenda: 'VD005',
-    cliente: 'Casa e Conforto', vendedor: 'Ana Souza',
-    produto: 'Lençol Solteiro Azul', qtd: 20,
-    subtotal: 900.00, juros: 18.00, total: 918.00, parcelas: 5,
-    data: '08/10/2026 11:45'
-  },
-  {
-    id: 6, codigo: 'NF-PQR234567', codigoVenda: 'VD006',
-    cliente: 'Tecidos & Cia', vendedor: 'Roberto Nunes',
-    produto: 'Camiseta Básica M', qtd: 30,
-    subtotal: 960.00, juros: 0, total: 960.00, parcelas: 1,
-    data: '10/10/2026 09:30'
-  },
-];
-
+// API_URL e token herdados de app.js
+let notas = [];
 let notaSelecionada = null;
+
+// ── API HELPER ──
+async function api(path, opts = {}) {
+  const token = localStorage.getItem('token');
+  const res = await fetch(API_URL + path, {
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    ...opts,
+  });
+  if (res.status === 401) { localStorage.clear(); location.href = '../index.html'; return; }
+  if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.detail || res.statusText); }
+  if (res.status === 204) return null;
+  return res.json();
+}
+
+// ── CONVERTE VENDA → NOTA FISCAL ──
+function vendaParaNota(v) {
+  return {
+    id:          v.id,
+    codigo:      'NF-' + v.codigo,
+    codigoVenda: v.codigo,
+    cliente:     v.cliente,
+    vendedor:    v.vendedor,
+    produto:     v.produto,
+    qtd:         v.qtd,
+    subtotal:    v.subtotal,
+    juros:       v.juros,
+    total:       v.total,
+    parcelas:    v.parcelas,
+    status:      v.status,
+    data:        v.data || '—',
+  };
+}
+
+// ── CARREGAR NOTAS DA API ──
+async function carregarNotas() {
+  try {
+    const vendas = await api('/vendas');
+    notas = vendas
+      .filter(v => ['enviado', 'entregue', 'producao', 'atraso'].includes(v.status))
+      .map(vendaParaNota);
+    atualizarResumo();
+    renderTabela();
+  } catch (e) {
+    alert('Erro ao carregar notas: ' + e.message);
+  }
+}
 
 // ── INICIALIZA ──
 document.addEventListener('DOMContentLoaded', () => {
-  atualizarResumo();
-  renderTabela();
   atualizarData();
+  carregarNotas();
 });
 
 // ── ATUALIZA RESUMO ──
 function atualizarResumo() {
-  const total = notas.length;
-  const valorTotal = notas.reduce((s, n) => s + n.total, 0);
+  const total       = notas.length;
+  const valorTotal  = notas.reduce((s, n) => s + n.total, 0);
+  const agora       = new Date();
 
   const doMes = notas.filter(n => {
+    if (!n.data || n.data === '—') return false;
     const partes = n.data.split('/');
+    if (partes.length < 3) return false;
     const mes = parseInt(partes[1]) - 1;
-    const ano = parseInt(partes[2].split(' ')[0]);   // ✅ BUG 1 corrigido: era split('')[0]
+    const ano = parseInt(partes[2].split(' ')[0]);
     const data = new Date(ano, mes);
-    const agora = new Date();
-    return data.getMonth() === agora.getMonth()
-      && data.getFullYear() === agora.getFullYear();
+    return data.getMonth() === agora.getMonth() && data.getFullYear() === agora.getFullYear();
   }).length;
 
   const clientesUnicos = new Set(notas.map(n => n.cliente)).size;
 
-  document.getElementById('total-notas').textContent = total;
-  document.getElementById('total-valor').textContent = 'R$ ' + valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
-  document.getElementById('total-mes').textContent = doMes;
-  document.getElementById('total-clientes-nf').textContent = clientesUnicos;
+  document.getElementById('total-notas').textContent        = total;
+  document.getElementById('total-valor').textContent        = 'R$ ' + valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+  document.getElementById('total-mes').textContent          = doMes;
+  document.getElementById('total-clientes-nf').textContent  = clientesUnicos;
 }
 
 // ── RENDERIZA TABELA ──
 function renderTabela() {
-  const tbody = document.getElementById('tabela-body');
-  const info = document.getElementById('pag-info');
-  const pesq = document.getElementById('pesquisa').value.toLowerCase();
+  const tbody   = document.getElementById('tabela-body');
+  const info    = document.getElementById('pag-info');
+  const pesq    = document.getElementById('pesquisa').value.toLowerCase();
   const dataIni = document.getElementById('filtro-data-ini').value;
   const dataFim = document.getElementById('filtro-data-fim').value;
 
@@ -91,11 +93,13 @@ function renderTabela() {
       || n.codigoVenda.toLowerCase().includes(pesq);
 
     let dataOk = true;
-    if (dataIni || dataFim) {
+    if ((dataIni || dataFim) && n.data && n.data !== '—') {
       const partes = n.data.split('/');
-      const dataNota = new Date(`${partes[2].split(' ')[0]}-${partes[1]}-${partes[0]}`);  // ✅ BUG 2 corrigido: era "parrtes[0]"
-      if (dataIni) dataOk = dataOk && dataNota >= new Date(dataIni);
-      if (dataFim) dataOk = dataOk && dataNota <= new Date(dataFim);
+      if (partes.length >= 3) {
+        const dataNota = new Date(`${partes[2].split(' ')[0]}-${partes[1]}-${partes[0]}`);
+        if (dataIni) dataOk = dataOk && dataNota >= new Date(dataIni);
+        if (dataFim) dataOk = dataOk && dataNota <= new Date(dataFim);
+      }
     }
 
     return textoOk && dataOk;
@@ -139,21 +143,20 @@ function renderTabela() {
 function verNota(id) {
   const n = notas.find(x => x.id === id);
   if (!n) return;
-
   notaSelecionada = n;
 
-  document.getElementById('nf-codigo').textContent = n.codigo;
-  document.getElementById('nf-data').textContent = n.data;
-  document.getElementById('nf-venda').textContent = n.codigoVenda;
-  document.getElementById('nf-cliente').textContent = n.cliente;
+  document.getElementById('nf-codigo').textContent   = n.codigo;
+  document.getElementById('nf-data').textContent     = n.data;
+  document.getElementById('nf-venda').textContent    = n.codigoVenda;
+  document.getElementById('nf-cliente').textContent  = n.cliente;
   document.getElementById('nf-vendedor').textContent = n.vendedor;
-  document.getElementById('nf-produto').textContent = n.produto;
-  document.getElementById('nf-qtd').textContent = n.qtd + ' unidades';
+  document.getElementById('nf-produto').textContent  = n.produto;
+  document.getElementById('nf-qtd').textContent      = n.qtd + ' unidades';
   document.getElementById('nf-parcelas').textContent = n.parcelas + 'x';
   document.getElementById('nf-subtotal').textContent =
     'R$ ' + n.subtotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
   document.getElementById('nf-juro').textContent =
-    'R$ ' + n.juros.toLocaleString('pt-BR', { minimumFractionDigits: 2 });  // ✅ BUG 3 corrigido: era n.juros + 'x' quando zero
+    'R$ ' + n.juros.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
   document.getElementById('nf-total').textContent =
     'R$ ' + n.total.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
 
@@ -197,7 +200,7 @@ function imprimirNF() {
 
 // ── LIMPAR FILTROS ──
 function limparFiltros() {
-  document.getElementById('pesquisa').value = '';
+  document.getElementById('pesquisa').value        = '';
   document.getElementById('filtro-data-ini').value = '';
   document.getElementById('filtro-data-fim').value = '';
   renderTabela();
@@ -206,11 +209,9 @@ function limparFiltros() {
 // ── DATA ──
 function atualizarData() {
   const el = document.getElementById('data-atual');
-  if (el) {
-    el.textContent = new Date().toLocaleDateString('pt-BR', {
-      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
-    });
-  }
+  if (el) el.textContent = new Date().toLocaleDateString('pt-BR', {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+  });
 }
 
 // ── FECHA MODAL CLICANDO FORA ──
@@ -226,28 +227,23 @@ document.addEventListener('keydown', e => {
 // ── ENVIAR NF POR EMAIL ──
 function enviarNFPorEmail() {
   if (!notaSelecionada) return;
-
   const email = document.getElementById('nf-email-destino').value.trim();
-  if (!email) {
-    alert('Informe o e-mail do cliente.');
-    return;
-  }
+  if (!email) { alert('Informe o e-mail do cliente.'); return; }
 
   const n = notaSelecionada;
-
   const params = {
-    codigo:    n.codigo,
-    venda:     n.codigoVenda,
-    cliente:   n.cliente,
-    vendedor:  n.vendedor,
-    produto:   n.produto,
-    qtd:       n.qtd,
-    parcelas:  n.parcelas + 'x',
-    subtotal:  'R$ ' + n.subtotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 }),
-    juros:     'R$ ' + n.juros.toLocaleString('pt-BR', { minimumFractionDigits: 2 }),
-    total:     'R$ ' + n.total.toLocaleString('pt-BR', { minimumFractionDigits: 2 }),
-    data:      n.data,
-    to_email:  email,
+    codigo:   n.codigo,
+    venda:    n.codigoVenda,
+    cliente:  n.cliente,
+    vendedor: n.vendedor,
+    produto:  n.produto,
+    qtd:      n.qtd,
+    parcelas: n.parcelas + 'x',
+    subtotal: 'R$ ' + n.subtotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 }),
+    juros:    'R$ ' + n.juros.toLocaleString('pt-BR', { minimumFractionDigits: 2 }),
+    total:    'R$ ' + n.total.toLocaleString('pt-BR', { minimumFractionDigits: 2 }),
+    data:     n.data,
+    to_email: email,
   };
 
   emailjs.send('service_2v33dqa', 'template_ojs8jva', params)
@@ -255,7 +251,5 @@ function enviarNFPorEmail() {
       alert('✅ Nota fiscal enviada para ' + email);
       document.getElementById('nf-email-destino').value = '';
     })
-    .catch(err => {
-      alert('❌ Erro ao enviar: ' + err.text);
-    });
+    .catch(err => { alert('❌ Erro ao enviar: ' + err.text); });
 }
