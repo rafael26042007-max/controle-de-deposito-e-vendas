@@ -25,7 +25,7 @@ app.include_router(vendas.router)
 app.include_router(producao.router)
 app.include_router(usuarios.router)
 
-app.mount("/", StaticFiles(directory="..", html=True), name="frontend")
+#app.mount("/", StaticFiles(directory="..", html=True), name="frontend")
 
 @app.get("/api")
 def root():
