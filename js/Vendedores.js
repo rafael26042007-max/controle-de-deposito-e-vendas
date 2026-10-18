@@ -1,45 +1,86 @@
-// ── DADOS DE EXEMPLO ──
-let vendedores = [
-  { id: 1, codigo: 'V001', nome: 'Carlos Silva',   telefone: '(47) 99999-1111', email: 'carlos@nhlencois.com',  comissao: 5,   status: 'ativo' },
-  { id: 2, codigo: 'V002', nome: 'Ana Souza',       telefone: '(47) 98888-2222', email: 'ana@nhlencois.com',     comissao: 5,   status: 'ativo' },
-  { id: 3, codigo: 'V003', nome: 'Marcos Pereira',  telefone: '(47) 97777-3333', email: 'marcos@nhlencois.com',  comissao: 4.5, status: 'ativo' },
-  { id: 4, codigo: 'V004', nome: 'Juliana Lima',    telefone: '(47) 96666-4444', email: 'juliana@nhlencois.com', comissao: 5,   status: 'inativo' },
-  { id: 5, codigo: 'V005', nome: 'Roberto Nunes',   telefone: '(47) 95555-5555', email: 'roberto@nhlencois.com', comissao: 6,   status: 'ativo' },
-];
+// API_URL herdado de app.js
 
+// ── Auth guard ──────────────────────────────────────────────
+const token = localStorage.getItem('token');
+if (!token) window.location.href = 'login.html';
+
+let vendedores = [];
 let editandoId = null;
 
-// ── INICIALIZA ──
-document.addEventListener('DOMContentLoaded', () => {
-  renderTabela();
-  atualizarResumo();
-  atualizarData();
-});
-
-// ── ATUALIZA RESUMO ──
-function atualizarResumo() {
-  document.getElementById('total-vendedores').textContent = vendedores.length;
-  document.getElementById('total-ativos').textContent =
-    vendedores.filter(v => v.status === 'ativo').length;
-  document.getElementById('total-inativos').textContent =
-    vendedores.filter(v => v.status === 'inativo').length;
+// ── Helper API ──────────────────────────────────────────────
+async function api(path, opts = {}) {
+  const res = await fetch(`${API_URL}${path}`, {
+    ...opts,
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+      ...(opts.headers || {})
+    }
+  });
+  if (res.status === 401) { localStorage.clear(); window.location.href = 'login.html'; return null; }
+  if (res.status === 204) return null;
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `Erro ${res.status}`);
+  }
+  return res.json();
 }
 
-// ── RENDERIZA TABELA ──
+// ── Carrega vendedores da API ────────────────────────────────
+async function carregarVendedores() {
+  try {
+    const data = await api('/vendedores');
+    if (!data) return;
+    vendedores = data;
+    renderTabela();
+    atualizarResumo();
+  } catch (e) {
+    console.error('Erro ao carregar vendedores:', e.message);
+  }
+}
+
+// ── INICIALIZA ──────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  atualizarData();
+  carregarVendedores();
+
+  const modal = document.getElementById('modal');
+  if (modal) {
+    modal.addEventListener('click', function(e) {
+      if (e.target === this) fecharModal();
+    });
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') fecharModal();
+  });
+});
+
+// ── ATUALIZA RESUMO ──────────────────────────────────────────
+function atualizarResumo() {
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  set('total-vendedores', vendedores.length);
+  set('total-ativos',   vendedores.filter(v => v.status === 'ativo').length);
+  set('total-inativos', vendedores.filter(v => v.status !== 'ativo').length);
+}
+
+// ── RENDERIZA TABELA ─────────────────────────────────────────
 function renderTabela() {
   const tbody  = document.getElementById('tabela-body');
   const info   = document.getElementById('pag-info');
-  const pesq   = document.getElementById('pesquisa').value.toLowerCase();
-  const status = document.getElementById('filtro-status').value;
+  const pesq   = (document.getElementById('pesquisa')?.value || '').toLowerCase();
+  const status = document.getElementById('filtro-status')?.value || 'todos';
 
   const lista = vendedores.filter(v => {
     const textoOk = v.nome.toLowerCase().includes(pesq)
-      || v.codigo.toLowerCase().includes(pesq)
-      || v.email.toLowerCase().includes(pesq)
-      || v.telefone.includes(pesq);
+      || (v.codigo || '').toLowerCase().includes(pesq)
+      || (v.email  || '').toLowerCase().includes(pesq)
+      || (v.telefone || '').includes(pesq);
     const statusOk = status === 'todos' || v.status === status;
     return textoOk && statusOk;
   });
+
+  if (!tbody) return;
 
   if (lista.length === 0) {
     tbody.innerHTML = `
@@ -49,13 +90,13 @@ function renderTabela() {
           Nenhum vendedor encontrado
         </td>
       </tr>`;
-    info.textContent = 'Nenhum resultado';
+    if (info) info.textContent = 'Nenhum resultado';
     return;
   }
 
   tbody.innerHTML = lista.map(v => `
     <tr>
-      <td class="td-code">${v.codigo}</td>
+      <td class="td-code">${v.codigo || '—'}</td>
       <td>
         <strong>${v.nome}</strong>
         <div style="font-size:11px;color:var(--muted);margin-top:2px">Vendedor</div>
@@ -79,10 +120,10 @@ function renderTabela() {
       </td>
     </tr>`).join('');
 
-  info.textContent = `Mostrando ${lista.length} de ${vendedores.length} vendedores`;
+  if (info) info.textContent = `Mostrando ${lista.length} de ${vendedores.length} vendedores`;
 }
 
-// ── MODAL ──
+// ── MODAL ────────────────────────────────────────────────────
 function abrirModal(id = null) {
   editandoId = id;
   document.getElementById('modal-title').textContent =
@@ -90,10 +131,11 @@ function abrirModal(id = null) {
 
   if (id) {
     const v = vendedores.find(x => x.id === id);
-    document.getElementById('f-codigo').value   = v.codigo;
+    if (!v) return;
+    document.getElementById('f-codigo').value   = v.codigo   || '';
     document.getElementById('f-nome').value     = v.nome;
-    document.getElementById('f-telefone').value = v.telefone;
-    document.getElementById('f-email').value    = v.email;
+    document.getElementById('f-telefone').value = v.telefone || '';
+    document.getElementById('f-email').value    = v.email    || '';
     document.getElementById('f-comissao').value = v.comissao;
     document.getElementById('f-status').value   = v.status;
   } else {
@@ -113,16 +155,12 @@ function fecharModal() {
   editandoId = null;
 }
 
-// ── SALVAR ──
-function salvar() {
+// ── SALVAR (POST / PUT) ──────────────────────────────────────
+async function salvar() {
   const nome = document.getElementById('f-nome').value.trim();
+  if (!nome) { alert('Preencha o nome do vendedor.'); return; }
 
-  if (!nome) {
-    alert('Preencha o nome do vendedor.');
-    return;
-  }
-
-  const dados = {
+  const payload = {
     codigo:   document.getElementById('f-codigo').value,
     nome,
     telefone: document.getElementById('f-telefone').value.trim(),
@@ -131,50 +169,38 @@ function salvar() {
     status:   document.getElementById('f-status').value,
   };
 
-  if (editandoId) {
-    const idx = vendedores.findIndex(v => v.id === editandoId);
-    vendedores[idx] = { ...vendedores[idx], ...dados };
-  } else {
-    dados.id = Date.now();
-    vendedores.push(dados);
+  try {
+    if (editandoId) {
+      await api(`/vendedores/${editandoId}`, { method: 'PUT', body: JSON.stringify(payload) });
+    } else {
+      await api('/vendedores', { method: 'POST', body: JSON.stringify(payload) });
+    }
+    fecharModal();
+    await carregarVendedores();
+  } catch (e) {
+    alert('Erro ao salvar: ' + e.message);
   }
-
-  fecharModal();
-  atualizarResumo();
-  renderTabela();
 }
 
-// ── ALTERNAR STATUS ──
-function alternarStatus(id) {
-  const v = vendedores.find(x => x.id === id);
-  if (!v) return;
-  v.status = v.status === 'ativo' ? 'inativo' : 'ativo';
-  atualizarResumo();
-  renderTabela();
+// ── ALTERNAR STATUS (PATCH) ──────────────────────────────────
+async function alternarStatus(id) {
+  try {
+    await api(`/vendedores/${id}/status`, { method: 'PATCH' });
+    await carregarVendedores();
+  } catch (e) {
+    alert('Erro ao alterar status: ' + e.message);
+  }
 }
 
-// ── GERAR CÓDIGO ──
+// ── UTILITÁRIOS ──────────────────────────────────────────────
 function gerarCodigo() {
   const num = String(vendedores.length + 1).padStart(3, '0');
   return `V${num}`;
 }
 
-// ── DATA ──
 function atualizarData() {
   const el = document.getElementById('data-atual');
-  if (el) {
-    el.textContent = new Date().toLocaleDateString('pt-BR', {
-      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
-    });
-  }
+  if (el) el.textContent = new Date().toLocaleDateString('pt-BR', {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+  });
 }
-
-// ── FECHA MODAL CLICANDO FORA ──
-document.getElementById('modal').addEventListener('click', function(e) {
-  if (e.target === this) fecharModal();
-});
-
-// ── FECHA COM ESC ──
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') fecharModal();
-});
