@@ -1,3 +1,5 @@
+const API_URL = `http://${window.location.hostname}:8000`;
+
 let perfilAtivo = 'admin';
 
 function selecionarPerfil(el, perfil) {
@@ -19,7 +21,7 @@ function toggleSenha() {
   }
 }
 
-function logar() {
+async function logar() {
   const usuario = document.getElementById('usuario').value.trim();
   const senha = document.getElementById('senha').value;
   const btn = document.getElementById('btn-login');
@@ -35,43 +37,43 @@ function logar() {
     document.getElementById('usuario').classList.add('error');
     document.getElementById('erro-texto').textContent = 'Preencha o campo usuário!';
     erro.classList.add('show');
-    return
+    return;
   }
   if (!senha) {
-    document.getElementById('usuario').classList.add('error');
+    document.getElementById('senha').classList.add('error');
     document.getElementById('erro-texto').textContent = 'Preencha o campo senha!';
     erro.classList.add('show');
     return;
   }
+
   btn.disabled = true;
   txt.style.display = 'none';
   spin.style.display = 'block';
 
-  setTimeout(() => {
-    const credenciais = {
-      admin: {user: 'admin', senha: '1234'},
-      vendedor: {user: 'vendedor', senha: '1234'},
-      producao: {user: 'producao', senha: '1234'}
-    };
+  try {
+    const res = await fetch(`${API_URL}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ usuario, senha })
+    });
 
-    const cred = credenciais[perfilAtivo];
-    if (usuario === cred.user && senha === cred.senha) {
+    if (res.ok) {
+      const data = await res.json();
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('perfil', data.perfil);
+      localStorage.setItem('nome', data.nome);
       document.getElementById('success').classList.add('show');
-      setTimeout(() => {
-        window.location.href="dashboard.html";
-        btn.disabled = false;
-        txt.style.display = 'block';
-        spin.style.display = 'none';
-      }, 2000);
+      setTimeout(() => { window.location.href = 'dashboard.html'; }, 1500);
     } else {
-      btn.disabled = false;
-      txt.style.display = 'block';
-      spin.style.display = 'none';
-      document.getElementById('usuario').classList.add('error');
-      document.getElementById('senha').classList.add('error');
-      document.getElementById('erro-texto').textContent =
-        `Incorreto. (Dica: user="${cred.user}" senha="1234")`;
-      erro.classList.add('show');
+      throw new Error('credenciais inválidas');
     }
-  }, 1400);
+  } catch (e) {
+    btn.disabled = false;
+    txt.style.display = 'block';
+    spin.style.display = 'none';
+    document.getElementById('usuario').classList.add('error');
+    document.getElementById('senha').classList.add('error');
+    document.getElementById('erro-texto').textContent = 'Usuário ou senha incorretos.';
+    erro.classList.add('show');
+  }
 }
