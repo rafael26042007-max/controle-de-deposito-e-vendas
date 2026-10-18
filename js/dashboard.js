@@ -1,4 +1,3 @@
-const API_URL = `http://${window.location.hostname}:8000`;
 
 // ── Auth guard ──────────────────────────────────────────────
 const token = localStorage.getItem('token');
