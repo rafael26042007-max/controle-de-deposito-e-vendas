@@ -64,11 +64,11 @@ function atualizarCards() {
   const baixo   = produtos.filter(p => getStatus(p.qtd, p.qtdMin).label === 'Baixo').length;
   const critico = produtos.filter(p => ['Crítico','Sem estoque'].includes(getStatus(p.qtd, p.qtdMin).label)).length;
 
-  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
-  set('card-total',   total);
-  set('card-normal',  normal);
-  set('card-baixo',   baixo);
-  set('card-critico', critico);
+  const vals = document.querySelectorAll('.stat-chip-val');
+  if (vals[0]) vals[0].textContent = total;
+  if (vals[1]) vals[1].textContent = normal;
+  if (vals[2]) vals[2].textContent = baixo;
+  if (vals[3]) vals[3].textContent = critico;
 }
 
 // ── INICIALIZAÇÃO ────────────────────────────────────────────
