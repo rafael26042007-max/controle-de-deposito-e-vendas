@@ -258,3 +258,76 @@
   .resumo-grid { grid-template-columns: 1fr; }
   .form-row    { grid-template-columns: 1fr; }
 }
+
+/* ── CARRINHO ── */
+.carrinho-add-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.btn-add-item {
+  background: var(--accent);
+  color: #000;
+  font-weight: 800;
+  font-size: 13px;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 16px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all .2s;
+  flex-shrink: 0;
+}
+.btn-add-item:hover { box-shadow: 0 4px 14px rgba(245,158,11,.35); }
+
+.carrinho-box {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 14px;
+  min-height: 54px;
+}
+
+.carrinho-vazio {
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
+  padding: 10px 0;
+}
+
+.carrinho-tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.carrinho-tabela th {
+  text-align: left;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  padding: 4px 6px;
+  border-bottom: 1px solid var(--border);
+}
+.carrinho-tabela td {
+  padding: 7px 6px;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+}
+.carrinho-tabela tr:last-child td { border-bottom: none; }
+
+.btn-remove-item {
+  background: none;
+  border: none;
+  color: var(--danger, #ef4444);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 6px;
+  transition: background .15s;
+}
+.btn-remove-item:hover { background: rgba(239,68,68,.12); }

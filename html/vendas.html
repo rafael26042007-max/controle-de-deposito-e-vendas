@@ -175,44 +175,42 @@
         <label class="form-label">Cliente *</label>
         <select class="form-select" id="f-cliente" onchange="verificarCliente()">
           <option value="">Selecione...</option>
-          <option value="1">Loja Mania do Lar</option>
-          <option value="2">Mercado Têxtil SP</option>
-          <option value="3">Armarinho Central 🔒</option>
-          <option value="4">Distribuidora Norte 🔒</option>
-          <option value="5">Casa e Conforto</option>
-          <option value="6">Tecidos & Cia</option>
         </select>
       </div>
       <div class="form-group">
         <label class="form-label">Vendedor *</label>
         <select class="form-select" id="f-vendedor">
           <option value="">Selecione...</option>
-          <option value="1">Carlos Silva (5%)</option>
-          <option value="2">Ana Souza (5%)</option>
-          <option value="3">Marcos Pereira (4.5%)</option>
-          <option value="5">Roberto Nunes (6%)</option>
         </select>
       </div>
     </div>
 
-    <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Produto *</label>
-        <select class="form-select" id="f-produto" onchange="calcularTotal()">
-          <option value="">Selecione...</option>
-          <option value="1" data-preco="65.00">Lençol Casal Branco — R$ 65,00</option>
-          <option value="2" data-preco="45.00">Lençol Solteiro Azul — R$ 45,00</option>
-          <option value="3" data-preco="18.00">Fronha Branca — R$ 18,00</option>
-          <option value="4" data-preco="32.00">Camiseta Básica P — R$ 32,00</option>
-          <option value="5" data-preco="32.00">Camiseta Básica M — R$ 32,00</option>
-          <option value="6" data-preco="38.00">Toalha de Banho — R$ 38,00</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Quantidade *</label>
-        <input class="form-input" type="number" id="f-qtd"
-               placeholder="Ex: 10" min="1" oninput="calcularTotal()">
-      </div>
+    <!-- Adicionar produto ao carrinho -->
+    <div class="form-label" style="margin-bottom:6px;font-weight:600">Produtos *</div>
+    <div class="carrinho-add-row">
+      <select class="form-select" id="f-produto" style="flex:2">
+        <option value="">Selecione o produto...</option>
+      </select>
+      <input class="form-input" type="number" id="f-qtd"
+             placeholder="Qtd" min="1" style="flex:0 0 80px">
+      <button class="btn-add-item" type="button" onclick="adicionarItem()">＋ Add</button>
+    </div>
+
+    <!-- Carrinho -->
+    <div class="carrinho-box" id="carrinho-box">
+      <div class="carrinho-vazio" id="carrinho-vazio">Nenhum produto adicionado ainda.</div>
+      <table class="carrinho-tabela" id="carrinho-tabela" style="display:none">
+        <thead>
+          <tr>
+            <th>Produto</th>
+            <th>Qtd</th>
+            <th>Unit.</th>
+            <th>Subtotal</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="carrinho-body"></tbody>
+      </table>
     </div>
 
     <div class="form-row">

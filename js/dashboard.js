@@ -91,10 +91,14 @@ function preencherMetricas(produtos, vendas, vendedores) {
   if (cards[1] && vendas) {
     const agora = new Date();
     const doMes = vendas.filter(v => {
-      const d = new Date(v.data || v.data_venda || v.created_at || 0);
-      return d.getMonth() === agora.getMonth() && d.getFullYear() === agora.getFullYear();
+      // data vem como "13/11/2026 10:00" (dd/mm/yyyy HH:MM)
+      const raw = v.data || '';
+      const [dmy] = raw.split(' ');
+      const [dd, mm, yyyy] = (dmy || '').split('/').map(Number);
+      if (!yyyy) return false;
+      return (mm - 1) === agora.getMonth() && yyyy === agora.getFullYear();
     });
-    const totalMes = doMes.reduce((s, v) => s + (v.valor_total || v.valor || 0), 0);
+    const totalMes = doMes.reduce((s, v) => s + (v.total || 0), 0);
     cards[1].querySelector('.metric-val').textContent = moeda(totalMes);
     cards[1].querySelector('.metric-sub').textContent =
       `${doMes.length} venda${doMes.length !== 1 ? 's' : ''} no mês`;

@@ -4,7 +4,8 @@
 const token = localStorage.getItem('token');
 if (!token) window.location.href = 'login.html';
 
-let vendas = [];
+let vendas   = [];
+let carrinho = [];   // [{produto_id, produto, preco_unit, qtd, subtotal}]
 
 // ── Helper API ──────────────────────────────────────────────
 async function api(path, opts = {}) {
@@ -54,7 +55,7 @@ async function carregarVendas() {
   }
 }
 
-// ── ATUALIZA RESUMO ──────────────────────────────────────────
+// ── RESUMO ──────────────────────────────────────────────────
 function atualizarResumo() {
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
   const total  = vendas.length;
@@ -68,7 +69,7 @@ function atualizarResumo() {
   set('total-atraso',    atraso);
 }
 
-// ── RENDERIZA TABELA ─────────────────────────────────────────
+// ── TABELA ───────────────────────────────────────────────────
 function renderTabela() {
   const tbody  = document.getElementById('tabela-body');
   const info   = document.getElementById('pag-info');
@@ -116,7 +117,9 @@ function renderTabela() {
       <td>${v.vendedor}</td>
       <td>
         ${v.produto}
-        <div style="font-size:11px;color:var(--muted);margin-top:2px">Qtd: ${v.qtd}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">
+          ${v.itens && v.itens.length > 1 ? v.itens.length + ' itens · ' : ''}Qtd total: ${v.qtd}
+        </div>
       </td>
       <td style="color:var(--muted)">${v.parcelas}x</td>
       <td class="td-valor">R$ ${v.total.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
@@ -139,14 +142,18 @@ async function abrirModal() {
   document.getElementById('modal-title').textContent = '🛒 Nova Venda';
   document.getElementById('venda-resumo').style.display = 'none';
 
-  const parcBox = document.getElementById('parcela-box') || document.getElementById('parcelas-box');
+  const parcBox = document.getElementById('parcelas-box');
   if (parcBox) parcBox.classList.remove('show');
 
-  const alertBloq = document.getElementById('alert-bloqueado') || document.getElementById('alert-bloquado');
+  const alertBloq = document.getElementById('alert-bloqueado');
   if (alertBloq) alertBloq.classList.remove('show');
 
   const btnSalvar = document.getElementById('btn-salvar');
   if (btnSalvar) btnSalvar.disabled = false;
+
+  // Resetar carrinho
+  carrinho = [];
+  renderCarrinho();
 
   // Carrega selects em paralelo
   try {
@@ -194,35 +201,99 @@ function fecharModal() {
   document.getElementById('modal').classList.remove('show');
 }
 
-// ── VERIFICA CLIENTE BLOQUEADO ───────────────────────────────
+// ── VERIFICAR CLIENTE BLOQUEADO ──────────────────────────────
 function verificarCliente() {
   const sel    = document.getElementById('f-cliente');
   const opt    = sel.options[sel.selectedIndex];
   const bloq   = opt?.dataset?.status === 'bloqueado';
-  const alerta = document.getElementById('alert-bloqueado') || document.getElementById('alert-bloquado');
+  const alerta = document.getElementById('alert-bloqueado');
   const btn    = document.getElementById('btn-salvar');
   if (alerta) bloq ? alerta.classList.add('show') : alerta.classList.remove('show');
   if (btn) btn.disabled = bloq;
 }
 
+// ── CARRINHO ─────────────────────────────────────────────────
+
+function adicionarItem() {
+  const selProduto = document.getElementById('f-produto');
+  const produtoId  = parseInt(selProduto.value);
+  const opt        = selProduto.options[selProduto.selectedIndex];
+  const qtd        = parseInt(document.getElementById('f-qtd').value) || 0;
+
+  if (!produtoId) { alert('Selecione um produto.'); return; }
+  if (qtd <= 0)   { alert('Informe uma quantidade válida.'); return; }
+
+  const preco   = parseFloat(opt.dataset.preco) || 0;
+  const nome    = opt.textContent.split(' — ')[0].trim();
+
+  // Se produto já está no carrinho, incrementa a qtd
+  const existente = carrinho.find(it => it.produto_id === produtoId);
+  if (existente) {
+    existente.qtd      += qtd;
+    existente.subtotal  = existente.preco_unit * existente.qtd;
+  } else {
+    carrinho.push({
+      produto_id: produtoId,
+      produto:    nome,
+      preco_unit: preco,
+      qtd:        qtd,
+      subtotal:   preco * qtd,
+    });
+  }
+
+  // Resetar seleção
+  selProduto.value = '';
+  document.getElementById('f-qtd').value = '';
+
+  renderCarrinho();
+  calcularTotal();
+}
+
+function removerItem(idx) {
+  carrinho.splice(idx, 1);
+  renderCarrinho();
+  calcularTotal();
+}
+
+function renderCarrinho() {
+  const vazio  = document.getElementById('carrinho-vazio');
+  const tabela = document.getElementById('carrinho-tabela');
+  const tbody  = document.getElementById('carrinho-body');
+
+  if (!tbody) return;
+
+  if (carrinho.length === 0) {
+    if (vazio)  vazio.style.display  = 'block';
+    if (tabela) tabela.style.display = 'none';
+    return;
+  }
+
+  if (vazio)  vazio.style.display  = 'none';
+  if (tabela) tabela.style.display = 'table';
+
+  tbody.innerHTML = carrinho.map((it, i) => `
+    <tr>
+      <td>${it.produto}</td>
+      <td>${it.qtd}</td>
+      <td>R$ ${it.preco_unit.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+      <td>R$ ${it.subtotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+      <td><button class="btn-remove-item" onclick="removerItem(${i})" title="Remover">✕</button></td>
+    </tr>`).join('');
+}
+
 // ── CALCULA TOTAL ────────────────────────────────────────────
 function calcularTotal() {
-  const produtoEl = document.getElementById('f-produto');
-  const qtd       = parseInt(document.getElementById('f-qtd').value) || 0;
-  const parcelas  = parseInt(document.getElementById('f-parcelas').value) || 1;
-  const option    = produtoEl.options[produtoEl.selectedIndex];
-  const preco     = parseFloat(option?.dataset?.preco) || 0;
+  const parcelas = parseInt(document.getElementById('f-parcelas').value) || 1;
+  const resumo   = document.getElementById('venda-resumo');
+  const parcBox  = document.getElementById('parcelas-box');
 
-  const resumo  = document.getElementById('venda-resumo');
-  const parcBox = document.getElementById('parcela-box') || document.getElementById('parcelas-box');
-
-  if (preco === 0 || qtd === 0) {
+  if (carrinho.length === 0) {
     if (resumo)  resumo.style.display = 'none';
     if (parcBox) parcBox.classList.remove('show');
     return;
   }
 
-  const subtotal = preco * qtd;
+  const subtotal = carrinho.reduce((s, it) => s + it.subtotal, 0);
   const juros    = parcelas >= 3 ? subtotal * 0.01 * (parcelas - 2) : 0;
   const total    = subtotal + juros;
   const valParc  = total / parcelas;
@@ -234,7 +305,7 @@ function calcularTotal() {
 
   if (resumo) resumo.style.display = 'block';
 
-  // Detalhe das parcelas
+  // Parcelas
   const hoje = new Date();
   let html = '';
   for (let i = 1; i <= parcelas; i++) {
@@ -257,24 +328,28 @@ function calcularTotal() {
 async function salvar() {
   const clienteId  = parseInt(document.getElementById('f-cliente').value);
   const vendedorId = parseInt(document.getElementById('f-vendedor').value);
-  const produtoEl  = document.getElementById('f-produto');
-  const produtoId  = parseInt(produtoEl.value);
-  const qtd        = parseInt(document.getElementById('f-qtd').value) || 0;
   const parcelas   = parseInt(document.getElementById('f-parcelas').value) || 1;
   const status     = document.getElementById('f-status').value;
 
-  if (!clienteId || !vendedorId || !produtoId || qtd <= 0) {
-    alert('Preencha todos os campos obrigatórios.');
-    return;
-  }
+  if (!clienteId)       { alert('Selecione o cliente.');           return; }
+  if (!vendedorId)      { alert('Selecione o vendedor.');          return; }
+  if (carrinho.length === 0) { alert('Adicione pelo menos um produto.'); return; }
 
-  const option   = produtoEl.options[produtoEl.selectedIndex];
-  const preco    = parseFloat(option.dataset.preco) || 0;
-  const subtotal = preco * qtd;
+  const subtotal = carrinho.reduce((s, it) => s + it.subtotal, 0);
   const juros    = parcelas >= 3 ? subtotal * 0.01 * (parcelas - 2) : 0;
-  const total    = subtotal + juros;
 
-  const payload = { cliente_id: clienteId, vendedor_id: vendedorId, produto_id: produtoId, qtd, subtotal, juros, total, parcelas, status };
+  const payload = {
+    cliente_id:  clienteId,
+    vendedor_id: vendedorId,
+    itens:       carrinho.map(it => ({
+      produto_id: it.produto_id,
+      qtd:        it.qtd,
+      preco_unit: it.preco_unit,
+    })),
+    juros,
+    parcelas,
+    status,
+  };
 
   try {
     await api('/vendas', { method: 'POST', body: JSON.stringify(payload) });
@@ -299,12 +374,17 @@ async function mudarStatus(id) {
 function verDetalhes(id) {
   const v = vendas.find(x => x.id === id);
   if (!v) return;
+
+  const itensTexto = (v.itens || []).map(it =>
+    `  • ${it.produto} × ${it.qtd} = R$ ${it.subtotal.toFixed(2)}`
+  ).join('\n') || `  • ${v.produto} × ${v.qtd}`;
+
   alert(
     `📋 Venda ${v.codigo}\n\n` +
     `Data: ${v.data || '—'}\n` +
     `Cliente: ${v.cliente}\n` +
-    `Vendedor: ${v.vendedor}\n` +
-    `Produto: ${v.produto} (${v.qtd} un.)\n` +
+    `Vendedor: ${v.vendedor}\n\n` +
+    `Produtos:\n${itensTexto}\n\n` +
     `Subtotal: R$ ${Number(v.subtotal).toFixed(2)}\n` +
     `Juros: R$ ${Number(v.juros).toFixed(2)}\n` +
     `Total: R$ ${Number(v.total).toFixed(2)}\n` +

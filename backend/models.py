@@ -52,14 +52,23 @@ class Venda(Base):
   codigo      = Column(String(20))
   cliente_id  = Column(Integer, ForeignKey("clientes.id"))
   vendedor_id = Column(Integer, ForeignKey("vendedores.id"))
-  produto_id  = Column(Integer, ForeignKey("produtos.id"))
-  qtd         = Column(Integer, nullable=False)
+  produto_id  = Column(Integer, ForeignKey("produtos.id"), nullable=True)   # legado
+  qtd         = Column(Integer, nullable=True)                               # legado
   subtotal    = Column(Numeric(10, 2), default=0)
   juros       = Column(Numeric(10, 2), default=0)
   total       = Column(Numeric(10, 2), default=0)
   parcelas    = Column(Integer, default=1)
   status      = Column(String(20), default='pendente')
-  data        = Column(String(50))          # ← linha nova
+  data        = Column(String(50))
+
+class VendaItem(Base):
+  __tablename__ = "venda_itens"
+  id         = Column(Integer, primary_key=True, index=True)
+  venda_id   = Column(Integer, ForeignKey("vendas.id", ondelete="CASCADE"))
+  produto_id = Column(Integer, ForeignKey("produtos.id"))
+  qtd        = Column(Integer, nullable=False)
+  preco_unit = Column(Numeric(10, 2), nullable=False)
+  subtotal   = Column(Numeric(10, 2), nullable=False)
 
 class NotaFiscal(Base):
     __tablename__ = "notas_fiscais"
