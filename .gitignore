@@ -4,3 +4,13 @@
 node_modules
 dist
 .cache
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+*.egg-info/
+.venv/
+venv/
