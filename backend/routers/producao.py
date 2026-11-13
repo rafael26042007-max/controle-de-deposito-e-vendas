@@ -52,7 +52,7 @@ def confirmar(dados: ProducaoSchema, db: Session = Depends(get_db)):
   # Adiciona ao estoque do produto
   produto = db.query(models.Produto).filter(models.Produto.id == dados.produto_id).first()
   if produto:
-    produto.qtd_estoque = int(produto.qtd_estoque or 0) + dados.qtd
+    produto.qtd = int(produto.qtd or 0) + dados.qtd
 
   # Salva histórico
   p = models.Producao(

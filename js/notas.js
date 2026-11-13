@@ -9,7 +9,7 @@ async function api(path, opts = {}) {
     headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
     ...opts,
   });
-  if (res.status === 401) { localStorage.clear(); location.href = '../index.html'; return; }
+  if (res.status === 401) { localStorage.clear(); location.href = 'login.html'; return; }
   if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.detail || res.statusText); }
   if (res.status === 204) return null;
   return res.json();

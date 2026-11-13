@@ -78,8 +78,8 @@ function preencherMetricas(produtos, vendas, vendedores) {
   if (cards[0] && produtos) {
     const total = produtos.length;
     const baixo = produtos.filter(p => {
-      const est = p.estoque ?? p.quantidade ?? 0;
-      const min = p.estoque_minimo ?? p.minimo ?? 0;
+      const est = p.qtd     ?? 0;
+      const min = p.qtd_min ?? 0;
       return min > 0 && est <= min;
     }).length;
     cards[0].querySelector('.metric-val').textContent = total;
@@ -106,7 +106,7 @@ function preencherMetricas(produtos, vendas, vendedores) {
 
   // Card 2 — Vendedores ativos
   if (cards[2] && vendedores) {
-    const ativos = vendedores.filter(v => v.ativo !== false && v.status !== 'inativo').length;
+    const ativos = vendedores.filter(v => v.status === 'ativo').length;
     cards[2].querySelector('.metric-val').textContent = ativos;
     cards[2].querySelector('.metric-sub').textContent =
       `${ativos} ativo${ativos !== 1 ? 's' : ''}`;
@@ -117,7 +117,7 @@ function preencherMetricas(produtos, vendas, vendedores) {
     let atrasadas = 0;
     if (vendas) {
       atrasadas = vendas.filter(v =>
-        v.status === 'atrasado' || v.parcelas_atrasadas > 0
+        v.status === 'atraso'
       ).length;
     }
     cards[3].querySelector('.metric-val').textContent = atrasadas;
@@ -136,15 +136,23 @@ function preencherUltimasVendas(vendas) {
     return;
   }
 
+  // data vem como "13/11/2026 10:00" — converte para timestamp comparável
+  function dataTs(v) {
+    const raw = v.data || '';
+    const [dmy] = raw.split(' ');
+    const [dd, mm, yyyy] = (dmy || '').split('/').map(Number);
+    return yyyy ? new Date(yyyy, mm - 1, dd).getTime() : 0;
+  }
+
   const ultimas = [...vendas]
-    .sort((a, b) => new Date(b.data || b.data_venda || b.created_at || 0) - new Date(a.data || a.data_venda || a.created_at || 0))
+    .sort((a, b) => dataTs(b) - dataTs(a))
     .slice(0, 5);
 
   tbody.innerHTML = ultimas.map(v => `
     <tr>
       <td>${v.cliente_nome || v.cliente || '—'}</td>
       <td>${v.vendedor_nome || v.vendedor || '—'}</td>
-      <td>${moeda(v.valor_total || v.valor || 0)}</td>
+      <td>${moeda(v.total || 0)}</td>
       <td>${badgeVenda(v.status)}</td>
     </tr>
   `).join('');
@@ -162,14 +170,14 @@ function preencherAlertas(produtos) {
   if (produtos) {
     produtos
       .filter(p => {
-        const est = p.estoque ?? p.quantidade ?? 0;
-        const min = p.estoque_minimo ?? p.minimo ?? 0;
+        const est = p.qtd     ?? 0;
+        const min = p.qtd_min ?? 0;
         return min > 0 && est <= min;
       })
       .slice(0, 5)
       .forEach(p => {
-        const est = p.estoque ?? p.quantidade ?? 0;
-        const min = p.estoque_minimo ?? p.minimo ?? 0;
+        const est = p.qtd     ?? 0;
+        const min = p.qtd_min ?? 0;
         const critico = est <= Math.floor(min * 0.5);
         alertas.push({
           ico:   critico ? '🔴' : '🟡',
@@ -211,13 +219,13 @@ function preencherEstoqueBaixo(produtos) {
 
   const baixo = produtos
     .filter(p => {
-      const est = p.estoque ?? p.quantidade ?? 0;
-      const min = p.estoque_minimo ?? p.minimo ?? 0;
+      const est = p.qtd     ?? 0;
+      const min = p.qtd_min ?? 0;
       return min > 0 && est <= min;
     })
     .sort((a, b) => {
-      const rA = (a.estoque ?? a.quantidade ?? 0) / Math.max(a.estoque_minimo ?? a.minimo ?? 1, 1);
-      const rB = (b.estoque ?? b.quantidade ?? 0) / Math.max(b.estoque_minimo ?? b.minimo ?? 1, 1);
+      const rA = (a.qtd ?? 0) / Math.max(a.qtd_min ?? 1, 1);
+      const rB = (b.qtd ?? 0) / Math.max(b.qtd_min ?? 1, 1);
       return rA - rB; // mais críticos primeiro
     });
 
@@ -227,8 +235,8 @@ function preencherEstoqueBaixo(produtos) {
   }
 
   tbody.innerHTML = baixo.slice(0, 10).map(p => {
-    const est = p.estoque ?? p.quantidade ?? 0;
-    const min = p.estoque_minimo ?? p.minimo ?? 0;
+    const est = p.qtd     ?? 0;
+    const min = p.qtd_min ?? 0;
     const critico = est <= Math.floor(min * 0.5);
     const cor   = critico ? 'var(--red)' : 'var(--accent)';
     const badge = critico
