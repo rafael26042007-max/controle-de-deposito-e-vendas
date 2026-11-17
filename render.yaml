@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: nhlencois-api
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: DATABASE_URL
+        sync: false          # você cola a URL do Supabase no painel do Render
+      - key: JWT_SECRET_KEY
+        sync: false          # coloque uma senha longa e aleatória
+      - key: ALLOWED_ORIGINS
+        sync: false          # cole a URL do GitHub Pages aqui depois

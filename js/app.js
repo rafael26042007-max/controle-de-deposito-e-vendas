@@ -1,4 +1,8 @@
-const API_URL = `http://${window.location.hostname}:8000`;
+// Em desenvolvimento (localhost) usa porta 8000; em produção usa a URL do Render
+// ⚠️ TROQUE a URL abaixo pela URL real do seu serviço no Render após o deploy
+const _PROD_API = 'https://nhlencois-api.onrender.com';
+const _isLocal  = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+const API_URL   = _isLocal ? `http://${window.location.hostname}:8000` : _PROD_API;
 
 let perfilAtivo = 'admin';
 
