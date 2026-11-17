@@ -1,10 +1,239 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <title>$Title$</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NhLençois — Usuários</title>
+  <meta name="theme-color" content="#080A10">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/usuarios.css">
 </head>
 <body>
-$END$
+<div class="app">
+
+  <!-- sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-ico">🧶</div>
+      <div class="sidebar-logo-name">NhLençois</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Principal</div>
+      <a class="nav-item" href="dashboard.html">
+        <span class="nav-item-ico">📊</span>Dashboard
+      </a>
+      <div class="nav-section-label">Cadastros</div>
+      <a class="nav-item" href="produtos.html">
+        <span class="nav-item-ico">📦</span>Produtos
+      </a>
+      <a class="nav-item" href="materia.html">
+        <span class="nav-item-ico">🧵</span>Matéria-Prima
+      </a>
+      <a class="nav-item" href="vendedores.html">
+        <span class="nav-item-ico">🧑‍💼</span>Vendedores
+      </a>
+      <a class="nav-item" href="clientes.html">
+        <span class="nav-item-ico">👥</span>Clientes
+      </a>
+      <div class="nav-section-label">Operações</div>
+      <a class="nav-item" href="producao.html">
+        <span class="nav-item-ico">🏭</span>Produção
+      </a>
+      <a class="nav-item" href="vendas.html">
+        <span class="nav-item-ico">🛒</span>Vendas
+      </a>
+      <a class="nav-item" href="notas.html">
+        <span class="nav-item-ico">🧾</span>Notas Fiscais
+      </a>
+      <div class="nav-section-label">Administração</div>
+      <a class="nav-item active" href="usuarios.html" id="nav-usuarios">
+        <span class="nav-item-ico">🔑</span>Usuários
+      </a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="sidebar-user-av">👤</div>
+      <div>
+        <div class="sidebar-user-name" id="sidebar-nome">Administrador</div>
+        <div class="sidebar-user-role" id="sidebar-perfil">Admin</div>
+      </div>
+      <button class="sidebar-user-exit" onclick="window.location.href='login.html'" title="Sair">🚪</button>
+    </div>
+  </aside>
+
+  <!-- conteúdo -->
+  <main class="main">
+
+    <div class="topbar">
+      <div class="topbar-title">Usuários</div>
+      <div class="topbar-right">
+        <div class="topbar-date" id="data-atual"></div>
+        <div class="topbar-notif">🔔<div class="notif-dot"></div></div>
+      </div>
+    </div>
+
+    <div class="page">
+
+      <div class="page-header">
+        <div>
+          <div class="page-title">Usuários do Sistema</div>
+          <div class="page-sub">Gerencie os logins e permissões de acesso</div>
+        </div>
+        <button class="btn-primary" onclick="abrirModal()">
+          ＋ Novo Usuário
+        </button>
+      </div>
+
+      <!-- Resumo -->
+      <div class="resumo-grid">
+        <div class="resumo-card">
+          <div class="resumo-ico azul">👤</div>
+          <div>
+            <div class="resumo-val" id="total-usuarios">0</div>
+            <div class="resumo-lbl">Total de Usuários</div>
+          </div>
+        </div>
+        <div class="resumo-card">
+          <div class="resumo-ico verde">✓</div>
+          <div>
+            <div class="resumo-val" id="total-ativos">0</div>
+            <div class="resumo-lbl">Ativos</div>
+          </div>
+        </div>
+        <div class="resumo-card">
+          <div class="resumo-ico cinza">⊘</div>
+          <div>
+            <div class="resumo-val" id="total-inativos">0</div>
+            <div class="resumo-lbl">Inativos</div>
+          </div>
+        </div>
+        <div class="resumo-card">
+          <div class="resumo-ico laranja">🔑</div>
+          <div>
+            <div class="resumo-val" id="total-admins">0</div>
+            <div class="resumo-lbl">Administradores</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <div class="search-box">
+          <span>🔍</span>
+          <input type="text" id="pesquisa"
+                 placeholder="Buscar por nome, usuário ou código..."
+                 oninput="renderTabela()">
+        </div>
+        <select class="filter-select" id="filtro-perfil" onchange="renderTabela()">
+          <option value="todos">Todos os perfis</option>
+          <option value="admin">Admin</option>
+          <option value="vendedor">Vendedor</option>
+          <option value="producao">Produção</option>
+        </select>
+        <select class="filter-select" id="filtro-status" onchange="renderTabela()">
+          <option value="todos">Todos os status</option>
+          <option value="ativo">Ativos</option>
+          <option value="inativo">Inativos</option>
+        </select>
+      </div>
+
+      <!-- Tabela -->
+      <div class="table-card">
+        <table>
+          <thead>
+          <tr>
+            <th>Código</th>
+            <th>Nome</th>
+            <th>Usuário (login)</th>
+            <th>Perfil</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+          </thead>
+          <tbody id="tabela-body"></tbody>
+        </table>
+        <div class="pagination">
+          <div class="pagination-info" id="pag-info">0 usuários</div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+</div>
+
+<!-- Modal criar/editar -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">➕ Novo Usuário</div>
+      <button class="modal-close" onclick="fecharModal()">✕</button>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Nome Completo *</label>
+      <input class="form-input" type="text" id="f-nome"
+             placeholder="Ex: João da Silva">
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Login (usuário) *</label>
+        <input class="form-input" type="text" id="f-usuario"
+               placeholder="Ex: joao.silva" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Perfil *</label>
+        <select class="form-select" id="f-perfil">
+          <option value="vendedor">Vendedor</option>
+          <option value="producao">Produção</option>
+          <option value="admin">Administrador</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Senha</label>
+      <div class="senha-wrap">
+        <input class="form-input" type="password" id="f-senha"
+               placeholder="Digite a senha..." autocomplete="new-password">
+        <button class="btn-toggle-senha" type="button" onclick="toggleSenhaModal()" title="Mostrar senha">👁</button>
+      </div>
+      <div class="form-hint" id="senha-hint"></div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Status</label>
+      <select class="form-select" id="f-status">
+        <option value="ativo">Ativo</option>
+        <option value="inativo">Inativo</option>
+      </select>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="fecharModal()">Cancelar</button>
+      <button class="btn-primary" onclick="salvar()">✓ Salvar</button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/app.js"></script>
+<script src="../js/usuarios.js"></script>
+<script>
+  // Preenche nome/perfil no sidebar com dados salvos no localStorage
+  document.addEventListener('DOMContentLoaded', () => {
+    const nome   = localStorage.getItem('nome')   || 'Administrador';
+    const perfil = localStorage.getItem('perfil') || 'admin';
+    const nomeEl   = document.getElementById('sidebar-nome');
+    const perfilEl = document.getElementById('sidebar-perfil');
+    if (nomeEl)   nomeEl.textContent   = nome;
+    if (perfilEl) perfilEl.textContent = perfil.charAt(0).toUpperCase() + perfil.slice(1);
+  });
+
+  function toggleSenhaModal() {
+    const input = document.getElementById('f-senha');
+    input.type = input.type === 'password' ? 'text' : 'password';
+  }
+</script>
 </body>
 </html>

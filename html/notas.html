@@ -47,6 +47,10 @@
       <a class="nav-item active">
         <span class="nav-item-ico">🧾</span>Notas Fiscais
       </a>
+      <div class="nav-section-label" id="nav-label-admin">Administração</div>
+      <a class="nav-item" href="usuarios.html" id="nav-usuarios">
+        <span class="nav-item-ico">🔑</span>Usuários
+      </a>
     </nav>
     <div class="sidebar-user">
       <div class="sidebar-user-av">👤</div>
@@ -234,5 +238,23 @@
 <script>emailjs.init('oeOUhO9DRCE02o_s_');</script>
 <script src="../js/app.js"></script>
 <script src="../js/notas.js"></script>
+<script>
+  // Esconde o link de Usuários para perfis não-admin
+  (function(){
+    if (localStorage.getItem('perfil') !== 'admin') {
+      var el = document.getElementById('nav-usuarios');
+      var lb = document.getElementById('nav-label-admin');
+      if (el) el.style.display = 'none';
+      if (lb) lb.style.display = 'none';
+    }
+    // Preenche nome/perfil no sidebar
+    var nome   = localStorage.getItem('nome')   || 'Usuário';
+    var perfil = localStorage.getItem('perfil') || '';
+    var nEl = document.getElementById('sidebar-nome');
+    var pEl = document.getElementById('sidebar-perfil');
+    if (nEl)   nEl.textContent   = nome;
+    if (pEl && perfil) pEl.textContent = perfil.charAt(0).toUpperCase() + perfil.slice(1);
+  })();
+</script>
 </body>
 </html>
