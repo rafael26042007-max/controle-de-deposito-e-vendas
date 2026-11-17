@@ -45,5 +45,14 @@ def alternar_status(id: int, db: Session = Depends(get_db)):
 def deletar(id: int, db: Session = Depends(get_db)):
   v = db.query(models.Vendedor).filter(models.Vendedor.id == id).first()
   if not v: raise HTTPException(404, "Vendedor não encontrado")
+
+  # BUG-FIX: verifica vendas vinculadas antes de deletar
+  vendas = db.query(models.Venda).filter(models.Venda.vendedor_id == id).count()
+  if vendas:
+    raise HTTPException(
+        status_code=400,
+        detail=f"Vendedor possui {vendas} venda(s) vinculada(s). Não pode ser excluído."
+    )
+
   db.delete(v); db.commit()
   return {"ok": True}

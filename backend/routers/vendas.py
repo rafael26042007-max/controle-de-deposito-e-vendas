@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from pydantic import BaseModel
 from typing import List
 from database import get_db
@@ -114,8 +115,9 @@ def criar(dados: VendaSchema, db: Session = Depends(get_db)):
   juros    = dados.juros
   total    = subtotal + juros
 
-  count  = db.query(models.Venda).count()
-  codigo = f"VD{str(count + 1).zfill(3)}"
+  # BUG-FIX: usa MAX(id) em vez de COUNT para evitar duplicata após delete
+  max_id = db.query(func.max(models.Venda.id)).scalar() or 0
+  codigo = f"VD{str(max_id + 1).zfill(3)}"
 
   v = models.Venda(
     codigo      = codigo,

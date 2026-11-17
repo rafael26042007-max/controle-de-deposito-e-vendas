@@ -1,8 +1,10 @@
+import os
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 
-SECRET_KEY = "nhlencois_secret_2026"
+# BUG-FIX: SECRET_KEY vem de variável de ambiente (fallback para dev local)
+SECRET_KEY = os.getenv("JWT_SECRET_KEY", "nhlencois_secret_2026_dev")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 480
 

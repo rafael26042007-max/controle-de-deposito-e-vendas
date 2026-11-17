@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from pydantic import BaseModel
 from typing import Optional, List
 from database import get_db
@@ -19,8 +20,9 @@ def verificar_senha(senha: str, hash: str) -> bool:
   return pwd_context.verify(senha, hash)
 
 def gerar_codigo(db: Session) -> str:
-  count = db.query(Usuario).count()
-  return f"U{str(count + 1).zfill(3)}"
+  # BUG-FIX: usa MAX(id) para evitar código duplicado após delete
+  max_id = db.query(func.max(Usuario.id)).scalar() or 0
+  return f"U{str(max_id + 1).zfill(3)}"
 
 
 # ── SCHEMAS ──

@@ -1,4 +1,14 @@
 // API_URL e token herdados de app.js
+
+// ── Auth guard + perfil guard ────────────────────────────────
+{
+  const _t = localStorage.getItem('token');
+  if (!_t) window.location.href = 'login.html';
+  // BUG-FIX: apenas admin e vendedor podem acessar esta página
+  const _p = localStorage.getItem('perfil');
+  if (!['admin', 'vendedor'].includes(_p)) window.location.href = 'dashboard.html';
+}
+
 let notas = [];
 let notaSelecionada = null;
 

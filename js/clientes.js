@@ -1,8 +1,11 @@
 // API_URL herdado de app.js
 
-// ── Auth guard ──────────────────────────────────────────────
+// ── Auth guard + perfil guard ────────────────────────────────
 const token = localStorage.getItem('token');
 if (!token) window.location.href = 'login.html';
+// BUG-FIX: apenas admin e vendedor podem acessar esta página
+const _perfil = localStorage.getItem('perfil');
+if (!['admin', 'vendedor'].includes(_perfil)) window.location.href = 'dashboard.html';
 
 let clientes = [];
 let editandoId = null;

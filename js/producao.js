@@ -1,4 +1,12 @@
 // API_URL herdado de app.js
+// ── Auth guard + perfil guard ────────────────────────────────
+{
+  const _t = localStorage.getItem('token');
+  if (!_t) window.location.href = 'login.html';
+  // BUG-FIX: apenas admin e producao podem acessar esta página
+  const _p = localStorage.getItem('perfil');
+  if (!['admin', 'producao'].includes(_p)) window.location.href = 'dashboard.html';
+}
 
 // ── Auth guard ──────────────────────────────────────────────
 const token = localStorage.getItem('token');
@@ -89,7 +97,7 @@ function selecionarProduto() {
 
   document.getElementById('pib-nome').textContent = prod.nome;
   document.getElementById('pib-sub').textContent  =
-    `Estoque atual: ${prod.qtd ?? prod.qtd_estoque ?? 0} unidades`;
+    `Estoque atual: ${prod.qtd ?? 0} unidades`;
   document.getElementById('produto-info').classList.add('show');
 
   renderReceita();
@@ -194,7 +202,7 @@ async function confirmarProducao() {
     if (prod) {
       produtoAtual = { ...produtoAtual, ...prod };
       document.getElementById('pib-sub').textContent =
-        `Estoque atual: ${prod.qtd ?? prod.qtd_estoque ?? 0} unidades`;
+        `Estoque atual: ${prod.qtd ?? 0} unidades`;
     }
 
     document.getElementById('qtd-produzir').value = '';

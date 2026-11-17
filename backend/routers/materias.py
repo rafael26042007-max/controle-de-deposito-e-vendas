@@ -16,6 +16,15 @@ class MateriaSchema(BaseModel):
   qtd_min:   float = 0
   obs:       Optional[str] = None
 
+# BUG-FIX: schema de edição não inclui qtd — estoque só muda via /entrada
+class MateriaUpdateSchema(BaseModel):
+  codigo:    Optional[str] = None
+  nome:      str
+  categoria: Optional[str] = None
+  unidade:   str = 'un'
+  qtd_min:   float = 0
+  obs:       Optional[str] = None
+
 class EntradaSchema(BaseModel):
   quantidade: float
   obs:        Optional[str] = None
@@ -31,9 +40,10 @@ def criar(dados: MateriaSchema, db: Session = Depends(get_db)):
   return m
 
 @router.put("/{id}")
-def atualizar(id: int, dados: MateriaSchema, db: Session = Depends(get_db)):
+def atualizar(id: int, dados: MateriaUpdateSchema, db: Session = Depends(get_db)):
   m = db.query(models.MateriaPrima).filter(models.MateriaPrima.id == id).first()
   if not m: raise HTTPException(404, "Material não encontrado")
+  # BUG-FIX: qtd não está no schema de update — estoque protegido
   for k, v in dados.dict().items(): setattr(m, k, v)
   db.commit(); db.refresh(m)
   return m

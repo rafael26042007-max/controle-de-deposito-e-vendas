@@ -54,7 +54,8 @@ async function logar() {
     const res = await fetch(`${API_URL}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ usuario, senha })
+      // BUG-FIX: envia perfilAtivo para o backend validar
+      body: JSON.stringify({ usuario, senha, perfil: perfilAtivo })
     });
 
     if (res.ok) {
