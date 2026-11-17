@@ -23,7 +23,12 @@ if DATABASE_URL.startswith("sqlite"):
 else:
     connect_args = {}
 
-engine = create_engine(DATABASE_URL, connect_args=connect_args)
+engine = create_engine(
+    DATABASE_URL,
+    connect_args=connect_args,
+    pool_pre_ping=True,     # detecta conexões mortas antes de usar
+    pool_recycle=300,       # recicla conexões a cada 5 min (evita timeout do pooler)
+)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
