@@ -26,6 +26,7 @@
   z-index: 49;
   opacity: 0;
   transition: opacity .25s;
+  pointer-events: none; /* não bloqueia toques enquanto invisível */
 }
 .sidebar-overlay.show {
   opacity: 1;
