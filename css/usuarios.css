@@ -219,6 +219,18 @@
 @media (max-width: 1000px) {
   .resumo-grid { grid-template-columns: repeat(2, 1fr); }
 }
+@media (max-width: 768px) {
+  /* Tabela com scroll horizontal em vez de cortar colunas */
+  .table-card {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .table-card table { min-width: 520px; }
+
+  /* Filtros em coluna */
+  .filters-bar { flex-direction: column; gap: 8px; }
+  .filter-search { width: 100%; }
+}
 @media (max-width: 600px) {
   .resumo-grid { grid-template-columns: 1fr; }
   .form-row { grid-template-columns: 1fr; }
