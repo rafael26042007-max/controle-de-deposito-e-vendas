@@ -6,8 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>NhLençois — Dashboard</title>
   <meta name="theme-color" content="#080A10">
+  <link rel="manifest" href="../manifest.json">
+  <link rel="apple-touch-icon" href="../icons/icon-192.png">
+  <link rel="icon" type="image/png" href="../icons/favicon.png">
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/mobile.css">
 </head>
 
 <body>
@@ -74,6 +78,11 @@
       <a class="nav-item" href="usuarios.html" id="nav-usuarios">
         <span class="nav-item-ico">🔑</span>Usuários
       </a>
+      <div class="nav-section-label">Sistema</div>
+      <a class="nav-item" href="configuracoes.html">
+        <span class="nav-item-ico">⚙️</span>Configurações
+      </a>
+
     </nav>
 
     <div class="sidebar-user">
@@ -87,11 +96,14 @@
 
   </aside>
 
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
   <!-- ── CONTEÚDO PRINCIPAL ── -->
   <main class="main">
 
     <!-- Topbar -->
     <div class="topbar">
+      <button class="btn-menu" onclick="toggleSidebar()">☰</button>
       <div class="topbar-title">Painel Principal</div>
       <div class="topbar-right">
         <div class="topbar-date" id="data-atual"></div>
@@ -245,5 +257,6 @@
     if (pEl && perfil) pEl.textContent = perfil.charAt(0).toUpperCase() + perfil.slice(1);
   })();
 </script>
+  <script src="../js/mobile.js"></script>
 </body>
 </html>

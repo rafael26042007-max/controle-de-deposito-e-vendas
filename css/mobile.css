@@ -1,0 +1,141 @@
+/* ═══════════════════════════════════════════════════════════
+   mobile.css — Responsividade + Tamanho de fonte
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Botão hamburger (oculto no desktop) ── */
+.btn-menu {
+  display: none;
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 10px;
+  width: 36px; height: 36px;
+  align-items: center; justify-content: center;
+  font-size: 18px; cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* ── Overlay escuro por trás do sidebar mobile ── */
+.sidebar-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.55);
+  z-index: 49;
+  opacity: 0;
+  transition: opacity .25s;
+}
+.sidebar-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ══════════════════════════════════════════════
+   TABLET  (≤ 1024px)
+   ══════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+  .metrics { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ══════════════════════════════════════════════
+   MOBILE  (≤ 768px)
+   ══════════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* Sidebar vira drawer deslizante */
+  .sidebar {
+    left: -260px;
+    transition: left .28s cubic-bezier(.4,0,.2,1);
+    z-index: 50;
+    width: 240px;
+  }
+  .sidebar.open { left: 0; }
+
+  /* Overlay visível quando sidebar abre */
+  .sidebar-overlay { display: block; }
+
+  /* Conteúdo ocupa tela toda */
+  .main { margin-left: 0; }
+
+  /* Topbar — hamburger à esquerda */
+  .topbar { padding: 12px 16px; gap: 12px; }
+  .btn-menu { display: flex; }
+
+  /* Página */
+  .page { padding: 16px; }
+
+  /* Métricas 2 colunas */
+  .metrics { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px; }
+
+  /* Grid de conteúdo — coluna única */
+  .content-grid { grid-template-columns: 1fr; gap: 12px; margin-bottom: 16px; }
+
+  /* Tabelas com scroll horizontal */
+  .dash-card-body { overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 10px 12px; }
+  .simple-table { min-width: 480px; }
+
+  /* Formulários / filtros */
+  .page-header { flex-direction: column; gap: 10px; align-items: flex-start; }
+  .page-actions { flex-wrap: wrap; gap: 8px; width: 100%; }
+  .btn { font-size: 13px; padding: 9px 14px; }
+
+  /* Cards de produto em listas — força scroll */
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  /* Modal fullscreen em mobile */
+  .modal-box {
+    width: calc(100% - 24px) !important;
+    max-height: 92vh;
+    overflow-y: auto;
+    margin: 12px;
+  }
+
+  /* Ajusta valores das métricas */
+  .metric-val { font-size: 22px; }
+  .metric-ico { font-size: 20px; margin-bottom: 8px; }
+}
+
+/* ══════════════════════════════════════════════
+   PEQUENO  (≤ 480px)
+   ══════════════════════════════════════════════ */
+@media (max-width: 480px) {
+  .metrics { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .metric-card { padding: 12px; }
+  .metric-val { font-size: 20px; }
+  .topbar-date { display: none; }   /* data some — economiza espaço */
+  .topbar-notif { display: none; }  /* notificações some */
+  .page { padding: 12px; }
+  .page-title { font-size: 18px; }
+  .dash-card-header { padding: 12px 14px; }
+}
+
+/* ══════════════════════════════════════════════
+   TAMANHO DE FONTE  (configurações)
+   ══════════════════════════════════════════════ */
+
+/* Fonte pequena */
+html[data-font="sm"] .nav-item           { font-size: 12px; }
+html[data-font="sm"] .page-title         { font-size: 19px; }
+html[data-font="sm"] .topbar-title       { font-size: 14px; }
+html[data-font="sm"] .metric-val         { font-size: 24px; }
+html[data-font="sm"] .metric-label       { font-size: 11px; }
+html[data-font="sm"] .metric-sub         { font-size: 10px; }
+html[data-font="sm"] .simple-table td    { font-size: 12px; }
+html[data-font="sm"] .simple-table th    { font-size: 10px; }
+html[data-font="sm"] .dash-card-title    { font-size: 12px; }
+html[data-font="sm"] .form-input         { font-size: 13px; }
+html[data-font="sm"] .btn                { font-size: 12px; }
+html[data-font="sm"] .modal-box          { font-size: 13px; }
+
+/* Fonte grande */
+html[data-font="lg"] .nav-item           { font-size: 15px; }
+html[data-font="lg"] .page-title         { font-size: 26px; }
+html[data-font="lg"] .topbar-title       { font-size: 19px; }
+html[data-font="lg"] .metric-val         { font-size: 34px; }
+html[data-font="lg"] .metric-label       { font-size: 14px; }
+html[data-font="lg"] .metric-sub         { font-size: 13px; }
+html[data-font="lg"] .simple-table td    { font-size: 15px; }
+html[data-font="lg"] .simple-table th    { font-size: 13px; }
+html[data-font="lg"] .dash-card-title    { font-size: 15px; }
+html[data-font="lg"] .form-input         { font-size: 16px; }
+html[data-font="lg"] .btn                { font-size: 15px; }
+html[data-font="lg"] .modal-box          { font-size: 15px; }

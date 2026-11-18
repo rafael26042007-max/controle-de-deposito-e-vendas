@@ -5,9 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>NhLençois — Usuários</title>
   <meta name="theme-color" content="#080A10">
+  <link rel="manifest" href="../manifest.json">
+  <link rel="apple-touch-icon" href="../icons/icon-192.png">
+  <link rel="icon" type="image/png" href="../icons/favicon.png">
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/dashboard.css">
   <link rel="stylesheet" href="../css/usuarios.css">
+  <link rel="stylesheet" href="../css/mobile.css">
 </head>
 <body>
 <div class="app">
@@ -50,6 +54,11 @@
       <a class="nav-item active" href="usuarios.html" id="nav-usuarios">
         <span class="nav-item-ico">🔑</span>Usuários
       </a>
+      <div class="nav-section-label">Sistema</div>
+      <a class="nav-item" href="configuracoes.html">
+        <span class="nav-item-ico">⚙️</span>Configurações
+      </a>
+
     </nav>
     <div class="sidebar-user">
       <div class="sidebar-user-av">👤</div>
@@ -61,10 +70,13 @@
     </div>
   </aside>
 
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
   <!-- conteúdo -->
   <main class="main">
 
     <div class="topbar">
+      <button class="btn-menu" onclick="toggleSidebar()">☰</button>
       <div class="topbar-title">Usuários</div>
       <div class="topbar-right">
         <div class="topbar-date" id="data-atual"></div>
@@ -235,5 +247,6 @@
     input.type = input.type === 'password' ? 'text' : 'password';
   }
 </script>
+  <script src="../js/mobile.js"></script>
 </body>
 </html>
