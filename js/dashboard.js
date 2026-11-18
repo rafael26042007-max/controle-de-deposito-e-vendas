@@ -128,7 +128,7 @@ function preencherMetricas(produtos, vendas, vendedores) {
 
 // ── Tabela últimas vendas ────────────────────────────────────
 function preencherUltimasVendas(vendas) {
-  const tbody = document.querySelector('.content-grid .dash-card:first-child tbody');
+  const tbody = document.getElementById('tbody-vendas');
   if (!tbody) return;
 
   if (!vendas || !vendas.length) {
@@ -160,11 +160,9 @@ function preencherUltimasVendas(vendas) {
 
 // ── Alertas ──────────────────────────────────────────────────
 function preencherAlertas(produtos) {
-  const alertasCard = document.querySelector('.content-grid .dash-card:last-child');
-  if (!alertasCard) return;
-
-  const body  = alertasCard.querySelector('.dash-card-body');
-  const badge = alertasCard.querySelector('.dash-card-header .badge');
+  const body  = document.getElementById('alertas-body');
+  const badge = document.getElementById('badge-alertas');
+  if (!body) return;
   const alertas = [];
 
   if (produtos) {
@@ -188,7 +186,10 @@ function preencherAlertas(produtos) {
       });
   }
 
-  if (badge) badge.textContent = alertas.length;
+  if (badge) {
+    badge.textContent = alertas.length;
+    badge.style.display = alertas.length > 0 ? '' : 'none';
+  }
 
   if (!alertas.length) {
     body.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--muted)">Sem alertas no momento ✅</div>';
@@ -209,10 +210,7 @@ function preencherAlertas(produtos) {
 
 // ── Tabela estoque baixo ─────────────────────────────────────
 function preencherEstoqueBaixo(produtos) {
-  // É o dash-card fora do content-grid (último filho de .page)
-  const card = document.querySelector('.page > .dash-card');
-  if (!card) return;
-  const tbody = card.querySelector('tbody');
+  const tbody = document.getElementById('tbody-estoque-baixo');
   if (!tbody) return;
 
   if (!produtos) return;

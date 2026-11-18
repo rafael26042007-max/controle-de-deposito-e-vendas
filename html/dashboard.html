@@ -132,27 +132,27 @@
       <div class="metrics">
         <div class="metric-card mc-green">
           <div class="metric-ico">📦</div>
-          <div class="metric-val mv-green">248</div>
+          <div class="metric-val mv-green" id="metric-estoque">—</div>
           <div class="metric-label">Produtos em Estoque</div>
-          <div class="metric-sub">6 produtos com estoque baixo</div>
+          <div class="metric-sub" id="metric-estoque-sub">&nbsp;</div>
         </div>
         <div class="metric-card mc-accent">
           <div class="metric-ico">💰</div>
-          <div class="metric-val mv-accent">R$ 12.480</div>
+          <div class="metric-val mv-accent" id="metric-vendas">—</div>
           <div class="metric-label">Vendas do Mês</div>
-          <div class="metric-sub">↑ 18% em relação ao mês anterior</div>
+          <div class="metric-sub" id="metric-vendas-sub">&nbsp;</div>
         </div>
         <div class="metric-card mc-blue">
           <div class="metric-ico">🧑‍💼</div>
-          <div class="metric-val mv-blue">5</div>
+          <div class="metric-val mv-blue" id="metric-vendedores">—</div>
           <div class="metric-label">Vendedores Ativos</div>
-          <div class="metric-sub">3 com vendas hoje</div>
+          <div class="metric-sub" id="metric-vendedores-sub">&nbsp;</div>
         </div>
         <div class="metric-card mc-red">
           <div class="metric-ico">⚠️</div>
-          <div class="metric-val mv-red">4</div>
+          <div class="metric-val mv-red" id="metric-atraso">—</div>
           <div class="metric-label">Parcelas em Atraso</div>
-          <div class="metric-sub">2 clientes bloqueados</div>
+          <div class="metric-sub" id="metric-atraso-sub">&nbsp;</div>
         </div>
       </div>
 
@@ -175,37 +175,8 @@
                 <th>Status</th>
               </tr>
               </thead>
-              <tbody>
-              <tr>
-                <td>Loja Mania do Lar</td>
-                <td>Carlos</td>
-                <td>R$ 780,00</td>
-                <td><span class="badge badge-blue">Enviado</span></td>
-              </tr>
-              <tr>
-                <td>Mercado Têxtil SP</td>
-                <td>Ana</td>
-                <td>R$ 1.200,00</td>
-                <td><span class="badge badge-green">Entregue</span></td>
-              </tr>
-              <tr>
-                <td>Armarinho Central</td>
-                <td>Carlos</td>
-                <td>R$ 520,00</td>
-                <td><span class="badge badge-orange">Produção</span></td>
-              </tr>
-              <tr>
-                <td>Distribuidora Norte</td>
-                <td>Marcos</td>
-                <td>R$ 340,00</td>
-                <td><span class="badge badge-red">Pendente</span></td>
-              </tr>
-              <tr>
-                <td>Casa e Conforto</td>
-                <td>Ana</td>
-                <td>R$ 960,00</td>
-                <td><span class="badge badge-orange">Produção</span></td>
-              </tr>
+              <tbody id="tbody-vendas">
+              <tr><td colspan="4" style="text-align:center;color:var(--muted);padding:1.2rem 0">Carregando…</td></tr>
               </tbody>
             </table>
           </div>
@@ -215,46 +186,10 @@
         <div class="dash-card">
           <div class="dash-card-header">
             <span class="dash-card-title">🚨 Alertas</span>
-            <span class="badge badge-red">4</span>
+            <span class="badge badge-red" id="badge-alertas" style="display:none">0</span>
           </div>
-          <div class="dash-card-body">
-
-            <div class="alert-item">
-              <div class="alert-ico">🔴</div>
-              <div class="alert-body">
-                <div class="alert-title">Lençol Solteiro Azul</div>
-                <div class="alert-sub">Estoque crítico — apenas 3 unidades</div>
-                <div class="alert-time">Produto · Estoque mínimo: 10</div>
-              </div>
-            </div>
-
-            <div class="alert-item">
-              <div class="alert-ico">🔴</div>
-              <div class="alert-body">
-                <div class="alert-title">Embalagem Plástica</div>
-                <div class="alert-sub">Estoque crítico — apenas 15 unidades</div>
-                <div class="alert-time">Matéria-Prima · Estoque mínimo: 50</div>
-              </div>
-            </div>
-
-            <div class="alert-item">
-              <div class="alert-ico">🟡</div>
-              <div class="alert-body">
-                <div class="alert-title">Armarinho Central</div>
-                <div class="alert-sub">3 parcelas em atraso — cliente bloqueado</div>
-                <div class="alert-time">Cliente · Venda #0523</div>
-              </div>
-            </div>
-
-            <div class="alert-item">
-              <div class="alert-ico">🟡</div>
-              <div class="alert-body">
-                <div class="alert-title">Distribuidora Norte</div>
-                <div class="alert-sub">2 parcelas em atraso — cliente bloqueado</div>
-                <div class="alert-time">Cliente · Venda #0524</div>
-              </div>
-            </div>
-
+          <div class="dash-card-body" id="alertas-body">
+            <div style="text-align:center;color:var(--muted);padding:1.2rem 0">Carregando…</div>
           </div>
         </div>
 
@@ -278,31 +213,8 @@
               <th>Situação</th>
             </tr>
             </thead>
-            <tbody>
-            <tr>
-              <td style="color:var(--muted);font-family:monospace">LS002</td>
-              <td>Lençol Solteiro Azul</td>
-              <td>Lençóis</td>
-              <td style="color:var(--red);font-weight:700">3</td>
-              <td style="color:var(--muted)">10</td>
-              <td><span class="badge badge-red">Crítico</span></td>
-            </tr>
-            <tr>
-              <td style="color:var(--muted);font-family:monospace">CB005</td>
-              <td>Camiseta Básica M</td>
-              <td>Camisetas</td>
-              <td style="color:var(--red);font-weight:700">3</td>
-              <td style="color:var(--muted)">15</td>
-              <td><span class="badge badge-red">Crítico</span></td>
-            </tr>
-            <tr>
-              <td style="color:var(--muted);font-family:monospace">LS003</td>
-              <td>Lençol Solteiro Rosa</td>
-              <td>Lençóis</td>
-              <td style="color:var(--accent);font-weight:700">7</td>
-              <td style="color:var(--muted)">10</td>
-              <td><span class="badge badge-orange">Baixo</span></td>
-            </tr>
+            <tbody id="tbody-estoque-baixo">
+            <tr><td colspan="6" style="text-align:center;color:var(--muted);padding:1.2rem 0">Carregando…</td></tr>
             </tbody>
           </table>
         </div>
