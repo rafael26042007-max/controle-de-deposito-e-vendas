@@ -1,8 +1,8 @@
 // Service Worker — NhLençois ERP
-const CACHE = 'nhlencois-v3';
+const CACHE = 'nhlencois-v4';
 
-// Arquivos estáticos para cache offline
-const STATIC = [
+// Arquivos do app para cache offline
+const APP_FILES = [
   './',
   './index.html',
   './html/login.html',
@@ -36,54 +36,56 @@ const STATIC = [
   './icons/favicon.png',
 ];
 
-// Instala, pré-carrega e ativa imediatamente (sem esperar o banner)
+// Instala, pré-carrega e ativa imediatamente
 self.addEventListener('install', e => {
   e.waitUntil(
-    caches.open(CACHE).then(cache => cache.addAll(STATIC))
+    caches.open(CACHE).then(c => c.addAll(APP_FILES)).then(() => self.skipWaiting())
   );
-  self.skipWaiting(); // ativa direto, sem precisar clicar em "Atualizar"
-});
-
-// Recebe mensagem da página para ativar a nova versão
-self.addEventListener('message', e => {
-  if (e.data?.type === 'SKIP_WAITING') self.skipWaiting();
 });
 
 // Ativa e remove caches antigos
 self.addEventListener('activate', e => {
   e.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-    ).then(() => self.clients.claim())
+    caches.keys()
+      .then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
+      .then(() => self.clients.claim())
   );
 });
 
-// Estratégia: network-first para API, cache-first para estáticos
+// Estratégia: network-first com cache: "no-cache" para arquivos do app
+// (sempre pergunta ao servidor se o arquivo mudou — igual ao pregão)
+// API Render/Supabase: direto na rede, sem cache
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
 
-  // Requisições à API: sempre tenta network; se falhar, retorna erro (sem cache de dados)
+  // APIs: nunca cacheia dados
   if (url.hostname.includes('onrender.com') || url.hostname.includes('supabase')) {
-    e.respondWith(fetch(e.request).catch(() =>
-      new Response(JSON.stringify({ error: 'Sem conexão' }), {
-        headers: { 'Content-Type': 'application/json' }
-      })
-    ));
+    e.respondWith(
+      fetch(e.request).catch(() =>
+        new Response(JSON.stringify({ error: 'Sem conexão' }), {
+          headers: { 'Content-Type': 'application/json' }
+        })
+      )
+    );
     return;
   }
 
-  // Arquivos estáticos: cache-first
+  // Arquivos do próprio app: network-first com revalidação
+  // cache: "no-cache" = sempre confirma com o servidor se mudou (ETag/304)
+  // Se offline, usa a cópia salva
+  if (e.request.method !== 'GET' || url.origin !== location.origin) return;
+
+  const fresh = e.request.mode === 'navigate'
+    ? fetch(e.request.url, { cache: 'no-cache', credentials: 'include' })
+    : fetch(e.request, { cache: 'no-cache' });
+
   e.respondWith(
-    caches.match(e.request).then(cached => {
-      if (cached) return cached;
-      return fetch(e.request).then(res => {
-        // Armazena no cache somente respostas válidas
-        if (res && res.status === 200 && res.type === 'basic') {
-          const clone = res.clone();
-          caches.open(CACHE).then(cache => cache.put(e.request, clone));
-        }
+    fresh
+      .then(res => {
+        const copy = res.clone();
+        caches.open(CACHE).then(c => c.put(e.request, copy));
         return res;
-      });
-    })
+      })
+      .catch(() => caches.match(e.request, { ignoreSearch: true }))
   );
 });
