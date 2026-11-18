@@ -1,5 +1,5 @@
 // Service Worker — NhLençois ERP
-const CACHE = 'nhlencois-v1';
+const CACHE = 'nhlencois-v2';
 
 // Arquivos estáticos para cache offline
 const STATIC = [
