@@ -2,9 +2,6 @@
    mobile.css — Responsividade + Tamanho de fonte
    ═══════════════════════════════════════════════════════════ */
 
-/* ── Corrige body padding do login (style.css) para páginas do app ── */
-body:has(.app) { padding: 0; }
-
 /* ── .main pode encolher abaixo do conteúdo mínimo (tabelas largas) ── */
 .main { min-width: 0; }
 
