@@ -69,8 +69,11 @@
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 14px;
-  overflow: hidden;
+  overflow-x: auto;           /* scroll horizontal em vez de cortar */
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
 }
+.table-card table { min-width: 520px; }
 
 .table-card table { width: 100%; border-collapse: collapse; }
 .table-card thead tr { background: var(--surface); }
