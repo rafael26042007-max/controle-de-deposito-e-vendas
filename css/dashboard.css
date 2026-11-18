@@ -2,6 +2,7 @@
 .app {
   display: flex;
   min-height: 100vh;
+  overflow-x: hidden; /* evita scroll horizontal em mobile */
 }
 
 /* ── SIDEBAR ── */
@@ -262,7 +263,8 @@
   .quick-grid { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 768px) {
-  .sidebar { transform: translateX(-100%); }
+  /* sidebar é controlado por mobile.css via left: -260px / .open */
   .main { margin-left: 0; }
   .metrics { grid-template-columns: 1fr 1fr; }
+  .quick-grid { grid-template-columns: repeat(2, 1fr); }
 }
