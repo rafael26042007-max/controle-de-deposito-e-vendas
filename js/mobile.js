@@ -1,5 +1,30 @@
 // ── mobile.js — hamburger menu + preferências de fonte + PWA ──
 
+// ── Bloqueia DevTools para perfis não-admin ────────────────────
+// (roda imediatamente, antes de qualquer outra coisa)
+(function bloquearDevtools() {
+  const perfil = localStorage.getItem('perfil');
+  if (perfil === 'admin') return; // admins podem usar DevTools normalmente
+
+  // Bloqueia F12 / Ctrl+Shift+I / Ctrl+Shift+J / Ctrl+Shift+C / Ctrl+U
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'F12') {
+      e.preventDefault(); e.stopImmediatePropagation(); return false;
+    }
+    if (e.ctrlKey && e.shiftKey && ['I','J','C','K'].includes(e.key.toUpperCase())) {
+      e.preventDefault(); e.stopImmediatePropagation(); return false;
+    }
+    if (e.ctrlKey && e.key.toUpperCase() === 'U') {
+      e.preventDefault(); e.stopImmediatePropagation(); return false;
+    }
+  }, true); // capture = true → captura antes do site processar
+
+  // Bloqueia clique direito (inspecionar elemento)
+  document.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+  }, true);
+})();
+
 // ── Aplica tamanho de fonte salvo ──────────────────────────────
 (function applyFont() {
   const f = localStorage.getItem('fontSize') || 'md';
