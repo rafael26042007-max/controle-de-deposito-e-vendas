@@ -1,5 +1,5 @@
 // Service Worker — NhLençois ERP
-const CACHE = 'nhlencois-v2';
+const CACHE = 'nhlencois-v3';
 
 // Arquivos estáticos para cache offline
 const STATIC = [
@@ -36,12 +36,12 @@ const STATIC = [
   './icons/favicon.png',
 ];
 
-// Instala e pré-carrega os arquivos estáticos
-// NÃO chama skipWaiting() aqui — o app decide quando atualizar
+// Instala, pré-carrega e ativa imediatamente (sem esperar o banner)
 self.addEventListener('install', e => {
   e.waitUntil(
     caches.open(CACHE).then(cache => cache.addAll(STATIC))
   );
+  self.skipWaiting(); // ativa direto, sem precisar clicar em "Atualizar"
 });
 
 // Recebe mensagem da página para ativar a nova versão
