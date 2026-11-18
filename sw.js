@@ -37,11 +37,16 @@ const STATIC = [
 ];
 
 // Instala e pré-carrega os arquivos estáticos
+// NÃO chama skipWaiting() aqui — o app decide quando atualizar
 self.addEventListener('install', e => {
   e.waitUntil(
     caches.open(CACHE).then(cache => cache.addAll(STATIC))
-      .then(() => self.skipWaiting())
   );
+});
+
+// Recebe mensagem da página para ativar a nova versão
+self.addEventListener('message', e => {
+  if (e.data?.type === 'SKIP_WAITING') self.skipWaiting();
 });
 
 // Ativa e remove caches antigos
