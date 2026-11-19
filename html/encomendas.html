@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NhLençois — Encomendas</title>
+  <meta name="theme-color" content="#080A10">
+  <link rel="manifest" href="../manifest.json">
+  <link rel="apple-touch-icon" href="../icons/icon-192.png">
+  <link rel="icon" type="image/png" href="../icons/favicon.png">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/encomendas.css">
+  <link rel="stylesheet" href="../css/mobile.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-ico">🧶</div>
+      <div class="sidebar-logo-name">NhLençois</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Principal</div>
+      <a class="nav-item" href="dashboard.html">
+        <span class="nav-item-ico">📊</span>Dashboard
+      </a>
+      <div class="nav-section-label">Cadastros</div>
+      <a class="nav-item" href="produtos.html">
+        <span class="nav-item-ico">📦</span>Produtos
+      </a>
+      <a class="nav-item" href="materia.html">
+        <span class="nav-item-ico">🧵</span>Matéria-Prima
+      </a>
+      <a class="nav-item" href="vendedores.html">
+        <span class="nav-item-ico">🧑‍💼</span>Vendedores
+      </a>
+      <a class="nav-item" href="clientes.html">
+        <span class="nav-item-ico">👥</span>Clientes
+      </a>
+      <div class="nav-section-label">Operações</div>
+      <a class="nav-item" href="producao.html">
+        <span class="nav-item-ico">🏭</span>Produção
+      </a>
+      <a class="nav-item" href="vendas.html">
+        <span class="nav-item-ico">🛒</span>Vendas
+      </a>
+      <a class="nav-item active">
+        <span class="nav-item-ico">📋</span>Encomendas
+      </a>
+      <a class="nav-item" href="notas.html">
+        <span class="nav-item-ico">🧾</span>Notas Fiscais
+      </a>
+      <div class="nav-section-label" id="nav-label-admin">Administração</div>
+      <a class="nav-item" href="usuarios.html" id="nav-usuarios">
+        <span class="nav-item-ico">🔑</span>Usuários
+      </a>
+      <div class="nav-section-label">Sistema</div>
+      <a class="nav-item" href="configuracoes.html">
+        <span class="nav-item-ico">⚙️</span>Configurações
+      </a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="sidebar-user-av">👤</div>
+      <div>
+        <div class="sidebar-user-name" id="sidebar-nome">Usuário</div>
+        <div class="sidebar-user-role" id="sidebar-perfil">Admin</div>
+      </div>
+      <button class="sidebar-user-exit" onclick="window.location.href='login.html'" title="Sair">🚪</button>
+    </div>
+  </aside>
+
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+  <!-- conteúdo -->
+  <main class="main">
+
+    <div class="topbar">
+      <button class="btn-menu" onclick="toggleSidebar()">☰</button>
+      <div class="topbar-title">Encomendas</div>
+      <div class="topbar-right">
+        <div class="topbar-date" id="data-atual"></div>
+        <div class="topbar-notif">🔔<div class="notif-dot"></div></div>
+      </div>
+    </div>
+
+    <div class="page">
+
+      <div class="page-header">
+        <div>
+          <div class="page-title">Pedidos sob Encomenda</div>
+          <div class="page-sub">Gerencie pedidos personalizados dos clientes</div>
+        </div>
+        <button class="btn-primary" onclick="abrirModal()">
+          ＋ Nova Encomenda
+        </button>
+      </div>
+
+      <!-- Resumo -->
+      <div class="resumo-grid">
+        <div class="resumo-card">
+          <div class="resumo-ico azul">📋</div>
+          <div>
+            <div class="resumo-val" id="res-total">0</div>
+            <div class="resumo-lbl">Total de Encomendas</div>
+          </div>
+        </div>
+        <div class="resumo-card">
+          <div class="resumo-ico amarelo">⏳</div>
+          <div>
+            <div class="resumo-val" id="res-pendentes">0</div>
+            <div class="resumo-lbl">Pendentes / Em Produção</div>
+          </div>
+        </div>
+        <div class="resumo-card">
+          <div class="resumo-ico roxo">✅</div>
+          <div>
+            <div class="resumo-val" id="res-prontos">0</div>
+            <div class="resumo-lbl">Prontos para Entregar</div>
+          </div>
+        </div>
+        <div class="resumo-card">
+          <div class="resumo-ico verde">📦</div>
+          <div>
+            <div class="resumo-val" id="res-entregues">0</div>
+            <div class="resumo-lbl">Entregues (mês)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <div class="search-box">
+          <span>🔍</span>
+          <input type="text" id="pesquisa"
+                 placeholder="Buscar por cliente, produto ou código..."
+                 oninput="renderTabela()">
+        </div>
+        <select class="filter-select" id="filtro-status" onchange="renderTabela()">
+          <option value="todos">Todos os status</option>
+          <option value="pendente">Pendente</option>
+          <option value="producao">Em Produção</option>
+          <option value="pronto">Pronto</option>
+          <option value="entregue">Entregue</option>
+          <option value="cancelado">Cancelado</option>
+        </select>
+      </div>
+
+      <!-- Tabela -->
+      <div class="table-card">
+        <table>
+          <thead>
+          <tr>
+            <th>Código</th>
+            <th>Cliente</th>
+            <th>Produto</th>
+            <th>Medidas</th>
+            <th>Qtd</th>
+            <th>Prazo</th>
+            <th>Valor</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+          </thead>
+          <tbody id="tabela-body">
+            <tr><td colspan="9" style="text-align:center;color:var(--muted);padding:2rem 0">Carregando…</td></tr>
+          </tbody>
+        </table>
+        <div class="pagination">
+          <div class="pagination-info" id="pag-info">0 encomendas</div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+</div>
+
+<!-- ── MODAL NOVA/EDITAR ENCOMENDA ── -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-titulo">📋 Nova Encomenda</div>
+      <button class="modal-close" onclick="fecharModal()">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- Cliente -->
+      <div class="form-group">
+        <label class="form-label">Cliente *</label>
+        <select class="form-select" id="f-cliente" style="display:block"></select>
+        <input class="form-input" id="f-cliente-avulso" placeholder="Nome do cliente (avulso)"
+               style="display:none; margin-top:8px">
+        <span class="toggle-avulso" onclick="toggleAvulso()">➕ Cliente não cadastrado</span>
+      </div>
+
+      <!-- Produto -->
+      <div class="form-group">
+        <label class="form-label">Produto *</label>
+        <select class="form-select" id="f-produto">
+          <option value="">Selecione o produto...</option>
+        </select>
+      </div>
+
+      <!-- Medidas -->
+      <div class="medidas-box">
+        <div class="medidas-titulo">📐 Medidas personalizadas</div>
+        <div class="form-row-3">
+          <div class="form-group" style="margin-bottom:0">
+            <label class="form-label">Largura (cm)</label>
+            <input class="form-input" type="number" id="f-largura" placeholder="ex: 140" min="0" step="0.1">
+          </div>
+          <div class="form-group" style="margin-bottom:0">
+            <label class="form-label">Comprimento (cm)</label>
+            <input class="form-input" type="number" id="f-comprimento" placeholder="ex: 210" min="0" step="0.1">
+          </div>
+          <div class="form-group" style="margin-bottom:0">
+            <label class="form-label">Altura (cm)</label>
+            <input class="form-input" type="number" id="f-altura" placeholder="ex: 30" min="0" step="0.1">
+          </div>
+        </div>
+      </div>
+
+      <!-- Quantidade, Prazo, Valor -->
+      <div class="form-row">
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">Quantidade *</label>
+          <input class="form-input" type="number" id="f-quantidade" placeholder="1" min="1" value="1">
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">Prazo de entrega *</label>
+          <input class="form-input" type="date" id="f-prazo">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">Valor total (R$) *</label>
+          <input class="form-input" type="number" id="f-valor" placeholder="0,00" min="0" step="0.01">
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">Status</label>
+          <select class="form-select" id="f-status">
+            <option value="pendente">Pendente</option>
+            <option value="producao">Em Produção</option>
+            <option value="pronto">Pronto</option>
+            <option value="entregue">Entregue</option>
+            <option value="cancelado">Cancelado</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Observações -->
+      <div class="form-group">
+        <label class="form-label">Observações</label>
+        <textarea class="form-textarea" id="f-obs"
+                  placeholder="Cor, acabamento, detalhes especiais…"></textarea>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="fecharModal()">Cancelar</button>
+      <button class="btn-primary" id="btn-salvar" onclick="salvar()">✓ Salvar Encomenda</button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/app.js"></script>
+<script src="../js/encomendas.js"></script>
+<script>
+  (function(){
+    if (!localStorage.getItem('token')) window.location.href = 'login.html';
+    if (localStorage.getItem('perfil') !== 'admin') {
+      var el = document.getElementById('nav-usuarios');
+      var lb = document.getElementById('nav-label-admin');
+      if (el) el.style.display = 'none';
+      if (lb) lb.style.display = 'none';
+    }
+    var nome   = localStorage.getItem('nome')   || 'Usuário';
+    var perfil = localStorage.getItem('perfil') || '';
+    var nEl = document.getElementById('sidebar-nome');
+    var pEl = document.getElementById('sidebar-perfil');
+    if (nEl) nEl.textContent = nome;
+    if (pEl && perfil) pEl.textContent = perfil.charAt(0).toUpperCase() + perfil.slice(1);
+  })();
+</script>
+<script src="../js/mobile.js"></script>
+</body>
+</html>
